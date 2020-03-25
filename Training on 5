@@ -1,0 +1,364 @@
+#setting working directory	
+setwd("F:/CREATING DATA FRAME")
+
+
+#loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections	
+file1_ACI<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ACI.csv",TRUE,",")
+file1_BGN<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.BGN.csv",TRUE,",")
+file1_CVR<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.CVR.csv",TRUE,",")
+file1_DIF<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.DIF.csv",TRUE,",")
+file1_ENT<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ENT.csv",TRUE,",")
+file1_EVN<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.EVN.csv",TRUE,",")
+file1_OSC<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.OSC.csv",TRUE,",")
+file1_PMN<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.PMN.csv",TRUE,",")
+file1_R3D<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.R3D.csv",TRUE,",")
+file1_RHZ<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.RHZ.csv",TRUE,",")
+file1_RNG<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.RNG.csv",TRUE,",")
+file1_RPS<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.RPS.csv",TRUE,",")
+file1_RVT<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.RVT.csv",TRUE,",")
+file1_SPT<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.SPT.csv",TRUE,",")
+file1_SUM<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.SUM.csv",TRUE,",")
+file1_Indices<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.Indices.csv",TRUE,",")
+file2_ACI<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ACI.csv",TRUE,",")
+file2_BGN<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.BGN.csv",TRUE,",")
+file2_CVR<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.CVR.csv",TRUE,",")
+file2_DIF<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.DIF.csv",TRUE,",")
+file2_ENT<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.ENT.csv",TRUE,",")
+file2_EVN<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.EVN.csv",TRUE,",")
+file2_OSC<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.OSC.csv",TRUE,",")
+file2_PMN<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.PMN.csv",TRUE,",")
+file2_R3D<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.R3D.csv",TRUE,",")
+file2_RHZ<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.RHZ.csv",TRUE,",")
+file2_RNG<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.RNG.csv",TRUE,",")
+file2_RPS<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.RPS.csv",TRUE,",")
+file2_RVT<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.RVT.csv",TRUE,",")
+file2_SPT<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.SPT.csv",TRUE,",")
+file2_SUM<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.SUM.csv",TRUE,",")
+file2_Indices<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.Indices.csv",TRUE,",")
+file3_ACI<-read.csv("S4A05079_20170919_181402__Towsey.Acoustic.ACI.csv",TRUE,",")
+file3_BGN<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.BGN.csv",TRUE,",")
+file3_CVR<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.CVR.csv",TRUE,",")
+file3_DIF<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.DIF.csv",TRUE,",")
+file3_ENT<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.ENT.csv",TRUE,",")
+file3_EVN<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.EVN.csv",TRUE,",")
+file3_OSC<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.OSC.csv",TRUE,",")
+file3_PMN<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.PMN.csv",TRUE,",")
+file3_R3D<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.R3D.csv",TRUE,",")
+file3_RHZ<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.RHZ.csv",TRUE,",")
+file3_RNG<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.RNG.csv",TRUE,",")
+file3_RPS<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.RPS.csv",TRUE,",")
+file3_RVT<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.RVT.csv",TRUE,",")
+file3_SPT<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.SPT.csv",TRUE,",")
+file3_SUM<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.SUM.csv",TRUE,",")
+file3_Indices<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.Indices.csv",TRUE,",")
+file4_ACI<-read.csv("S4A05079_20170921_181602__Towsey.Acoustic.ACI.csv",TRUE,",")
+file4_BGN<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.BGN.csv",TRUE,",")
+file4_CVR<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.CVR.csv",TRUE,",")
+file4_DIF<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.DIF.csv",TRUE,",")
+file4_ENT<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.ENT.csv",TRUE,",")
+file4_EVN<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.EVN.csv",TRUE,",")
+file4_OSC<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.OSC.csv",TRUE,",")
+file4_PMN<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.PMN.csv",TRUE,",")
+file4_R3D<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.R3D.csv",TRUE,",")
+file4_RHZ<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.RHZ.csv",TRUE,",")
+file4_RNG<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.RNG.csv",TRUE,",")
+file4_RPS<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.RPS.csv",TRUE,",")
+file4_RVT<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.RVT.csv",TRUE,",")
+file4_SPT<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.SPT.csv",TRUE,",")
+file4_SUM<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.SUM.csv",TRUE,",")
+file4_Indices<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.Indices.csv",TRUE,",")
+file5_ACI<-read.csv("S4A05079_20170927_182002__Towsey.Acoustic.ACI.csv",TRUE,",")
+file5_BGN<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.BGN.csv",TRUE,",")
+file5_CVR<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.CVR.csv",TRUE,",")
+file5_DIF<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.DIF.csv",TRUE,",")
+file5_ENT<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.ENT.csv",TRUE,",")
+file5_EVN<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.EVN.csv",TRUE,",")
+file5_OSC<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.OSC.csv",TRUE,",")
+file5_PMN<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.PMN.csv",TRUE,",")
+file5_R3D<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.R3D.csv",TRUE,",")
+file5_RHZ<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.RHZ.csv",TRUE,",")
+file5_RNG<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.RNG.csv",TRUE,",")
+file5_RPS<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.RPS.csv",TRUE,",")
+file5_RVT<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.RVT.csv",TRUE,",")
+file5_SPT<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.SPT.csv",TRUE,",")
+file5_SUM<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.SUM.csv",TRUE,",")
+file5_Indices<-read.csv("S4A05079_20170928_182102__Towsey.Acoustic.Indices.csv",TRUE,",")
+
+#cbinding files
+file1_data.frameBGN=cbind(file1_ACI,file1_BGN[,-1])
+file1_data.frameCVR=cbind(file1_data.frameBGN,file1_CVR[,-1])
+file1_data.frameDIF=cbind(file1_data.frameCVR,file1_DIF[,-1])
+file1_data.frameENT=cbind(file1_data.frameDIF,file1_ENT[,-1])
+file1_data.frameEVN=cbind(file1_data.frameENT,file1_EVN[,-1])
+file1_data.frameOSC=cbind(file1_data.frameEVN,file1_OSC[,-1])
+file1_data.framePMN=cbind(file1_data.frameOSC,file1_PMN[,-1])
+file1_data.frameR3D=cbind(file1_data.framePMN,file1_R3D[,-1])
+file1_data.frameRHZ=cbind(file1_data.frameR3D,file1_RHZ[,-1])
+file1_data.frameRNG=cbind(file1_data.frameRHZ,file1_RNG[,-1])
+file1_data.frameRPS=cbind(file1_data.frameRNG,file1_RPS[,-1])
+file1_data.frameRVT=cbind(file1_data.frameRPS,file1_RVT[,-1])
+file1_data.frameSPT=cbind(file1_data.frameRVT,file1_SPT[,-1])
+file1_data.frameSUM=cbind(file1_data.frameSPT,file1_SUM[,-1])
+file1_data.frameCOMPLETE=cbind(file1_data.frameSUM,file1_Indices[,-1])
+file2_data.frameBGN=cbind(file2_ACI,file2_BGN[,-1])
+file2_data.frameCVR=cbind(file2_data.frameBGN,file2_CVR[,-1])
+file2_data.frameDIF=cbind(file2_data.frameCVR,file2_DIF[,-1])
+file2_data.frameENT=cbind(file2_data.frameDIF,file2_ENT[,-1])
+file2_data.frameEVN=cbind(file2_data.frameENT,file2_EVN[,-1])
+file2_data.frameOSC=cbind(file2_data.frameEVN,file2_OSC[,-1])
+file2_data.framePMN=cbind(file2_data.frameOSC,file2_PMN[,-1])
+file2_data.frameR3D=cbind(file2_data.framePMN,file2_R3D[,-1])
+file2_data.frameRHZ=cbind(file2_data.frameR3D,file2_RHZ[,-1])
+file2_data.frameRNG=cbind(file2_data.frameRHZ,file2_RNG[,-1])
+file2_data.frameRPS=cbind(file2_data.frameRNG,file2_RPS[,-1])
+file2_data.frameRVT=cbind(file2_data.frameRPS,file2_RVT[,-1])
+file2_data.frameSPT=cbind(file2_data.frameRVT,file2_SPT[,-1])
+file2_data.frameSUM=cbind(file2_data.frameSPT,file2_SUM[,-1])
+file2_data.frameCOMPLETE=cbind(file2_data.frameSUM,file2_Indices[,-1])
+file3_data.frameBGN=cbind(file3_ACI,file3_BGN[,-1])
+file3_data.frameCVR=cbind(file3_data.frameBGN,file3_CVR[,-1])
+file3_data.frameDIF=cbind(file3_data.frameCVR,file3_DIF[,-1])
+file3_data.frameENT=cbind(file3_data.frameDIF,file3_ENT[,-1])
+file3_data.frameEVN=cbind(file3_data.frameENT,file3_EVN[,-1])
+file3_data.frameOSC=cbind(file3_data.frameEVN,file3_OSC[,-1])
+file3_data.framePMN=cbind(file3_data.frameOSC,file3_PMN[,-1])
+file3_data.frameR3D=cbind(file3_data.framePMN,file3_R3D[,-1])
+file3_data.frameRHZ=cbind(file3_data.frameR3D,file3_RHZ[,-1])
+file3_data.frameRNG=cbind(file3_data.frameRHZ,file3_RNG[,-1])
+file3_data.frameRPS=cbind(file3_data.frameRNG,file3_RPS[,-1])
+file3_data.frameRVT=cbind(file3_data.frameRPS,file3_RVT[,-1])
+file3_data.frameSPT=cbind(file3_data.frameRVT,file3_SPT[,-1])
+file3_data.frameSUM=cbind(file3_data.frameSPT,file3_SUM[,-1])
+file3_data.frameCOMPLETE=cbind(file3_data.frameSUM,file3_Indices[,-1])
+file4_data.frameBGN=cbind(file4_ACI,file4_BGN[,-1])
+file4_data.frameCVR=cbind(file4_data.frameBGN,file4_CVR[,-1])
+file4_data.frameDIF=cbind(file4_data.frameCVR,file4_DIF[,-1])
+file4_data.frameENT=cbind(file4_data.frameDIF,file4_ENT[,-1])
+file4_data.frameEVN=cbind(file4_data.frameENT,file4_EVN[,-1])
+file4_data.frameOSC=cbind(file4_data.frameEVN,file4_OSC[,-1])
+file4_data.framePMN=cbind(file4_data.frameOSC,file4_PMN[,-1])
+file4_data.frameR3D=cbind(file4_data.framePMN,file4_R3D[,-1])
+file4_data.frameRHZ=cbind(file4_data.frameR3D,file4_RHZ[,-1])
+file4_data.frameRNG=cbind(file4_data.frameRHZ,file4_RNG[,-1])
+file4_data.frameRPS=cbind(file4_data.frameRNG,file4_RPS[,-1])
+file4_data.frameRVT=cbind(file4_data.frameRPS,file4_RVT[,-1])
+file4_data.frameSPT=cbind(file4_data.frameRVT,file4_SPT[,-1])
+file4_data.frameSUM=cbind(file4_data.frameSPT,file4_SUM[,-1])
+file4_data.frameCOMPLETE=cbind(file4_data.frameSUM,file4_Indices[,-1])
+file5_data.frameBGN=cbind(file5_ACI,file5_BGN[,-1])
+file5_data.frameCVR=cbind(file5_data.frameBGN,file5_CVR[,-1])
+file5_data.frameDIF=cbind(file5_data.frameCVR,file5_DIF[,-1])
+file5_data.frameENT=cbind(file5_data.frameDIF,file5_ENT[,-1])
+file5_data.frameEVN=cbind(file5_data.frameENT,file5_EVN[,-1])
+file5_data.frameOSC=cbind(file5_data.frameEVN,file5_OSC[,-1])
+file5_data.framePMN=cbind(file5_data.frameOSC,file5_PMN[,-1])
+file5_data.frameR3D=cbind(file5_data.framePMN,file5_R3D[,-1])
+file5_data.frameRHZ=cbind(file5_data.frameR3D,file5_RHZ[,-1])
+file5_data.frameRNG=cbind(file5_data.frameRHZ,file5_RNG[,-1])
+file5_data.frameRPS=cbind(file5_data.frameRNG,file5_RPS[,-1])
+file5_data.frameRVT=cbind(file5_data.frameRPS,file5_RVT[,-1])
+file5_data.frameSPT=cbind(file5_data.frameRVT,file5_SPT[,-1])
+file5_data.frameSUM=cbind(file5_data.frameSPT,file5_SUM[,-1])
+file5_data.frameCOMPLETE=cbind(file5_data.frameSUM,file5_Indices[,-1])
+
+
+#rbinding acoustic indices values for all files together into one data frame	
+RBIND2=rbind(file1_data.frameCOMPLETE,file2_data.frameCOMPLETE)
+RBIND3=rbind(RBIND2,file3_data.frameCOMPLETE)
+RBIND4=rbind(RBIND3,file4_data.frameCOMPLETE)
+RBIND5=rbind(RBIND4,file5_data.frameCOMPLETE)
+
+#load in and attach training file to total data frame	
+RBIND5_train<-read.csv("RBIND5_train.csv",FALSE,",")
+RBIND5.FILE=cbind(RBIND5_train[,1],RBIND5)
+RBIND5.PW=cbind(RBIND5.FILE,RBIND5_train[,3])
+
+#name file, minutes and training columns of data frame	
+names(RBIND5.PW)[1]<-paste("file_nUMBER")
+names(RBIND5.PW)[2]<-paste("minute")
+names(RBIND5.PW)[3869]<-paste("Plains-wanderer")
+
+
+#generating indices names and character strings	
+#set nscalar and nIndices
+nscalar<-256
+nIndices<-26
+#naming ACI
+prefixACI <- "ACI"
+suffixACI<-seq(1:nscalar)
+my.namesACI<-c(paste(prefixACI,suffixACI,sep=""))
+my.namesACI
+#naming BGN
+prefixBGN<-"BGN"
+suffixBGN<-seq(1:nscalar)
+my.namesBGN<-c(paste(prefixBGN,suffixBGN,sep=""))
+my.namesBGN
+#namingCVR
+prefixCVR<-"CVR"
+suffixCVR<-seq(1:nscalar)
+my.namesCVR<-c(paste(prefixCVR,suffixCVR,sep=""))
+my.namesCVR
+#namingDIF
+prefixDIF<-"DIF"
+suffixDIF<-seq(1:nscalar)
+my.namesDIF<-c(paste(prefixDIF,suffixDIF,sep=""))
+my.namesDIF
+#naming ENT
+prefixENT<-"ENT"
+suffixENT<-seq(1:nscalar)
+my.namesENT<-c(paste(prefixENT,suffixENT,sep=""))
+my.namesENT
+#naming EVN
+prefixEVN<-"EVN"
+suffixEVN<-seq(1:nscalar)
+my.namesEVN<-c(paste(prefixEVN,suffixEVN,sep=""))
+my.namesEVN
+#naming OSC
+prefixOSC<-"OSC"
+suffixOSC<-seq(1:nscalar)
+my.namesOSC<-c(paste(prefixOSC,suffixOSC,sep=""))
+my.namesOSC
+#naming PMN
+prefixPMN<-"PMN"
+suffixPMN<-seq(1:nscalar)
+my.namesPMN<-c(paste(prefixPMN,suffixPMN,sep=""))
+my.namesPMN
+#naming R3D
+prefixR3D<-"R3D"
+suffixR3D<-seq(1:nscalar)
+my.namesR3D<-c(paste(prefixR3D,suffixR3D,sep=""))
+my.namesR3D
+#naming RHZ
+prefixRHZ<-"RHZ"
+suffixRHZ<-seq(1:nscalar)
+my.namesRHZ<-c(paste(prefixRHZ,suffixRHZ,sep=""))
+my.namesRHZ
+#naming RNG
+prefixRNG<-"RNG"
+suffixRNG<-seq(1:nscalar)
+my.namesRNG<-c(paste(prefixRNG,suffixRNG,sep=""))
+my.namesRNG
+#naming RPS
+prefixRPS<-"RPS"
+suffixRPS<-seq(1:nscalar)
+my.namesRPS<-c(paste(prefixRPS,suffixRPS,sep=""))
+my.namesRPS
+#namingRVT
+prefixRVT<-"RVT"
+suffixRVT<-seq(1:nscalar)
+my.namesRVT<-c(paste(prefixRVT,suffixRVT,sep=""))
+my.namesRVT
+#naming SPT
+prefixSPT<-"SPT"
+suffixSPT<-seq(1:nscalar)
+my.namesSPT<-c(paste(prefixSPT,suffixSPT,sep=""))
+my.namesSPT
+#naming SUM
+prefixSUM<-"SUM"
+suffixSUM<-seq(1:nscalar)
+my.namesSUM<-c(paste(prefixSUM,suffixSUM,sep=""))
+my.namesSUM
+#naming Indices
+prefixIndices<-"Indices"
+suffixIndices<-seq(1:nIndices)
+my.namesIndices<-c(paste(prefixIndices,suffixIndices,sep=""))
+my.namesIndices
+#joining character strings
+all_names=c(my.namesACI,my.namesBGN,my.namesCVR,my.namesDIF,my.namesENT,my.namesEVN,my.namesOSC,my.namesPMN,my.namesR3D,my.namesRHZ,my.namesRNG,my.namesRPS,my.namesRVT,my.namesSPT,my.namesSUM,my.namesIndices)
+length(all_names)
+
+#naming indices column headings	
+colnames(RBIND5.PW)[3:3868]<-paste(all_names)
+
+#balancing the ratio of positive and negative instances of target value	
+totalinstances<-nrow(RBIND5.PW)
+totalPWinstances<-sum(RBIND5.PW[,3869])
+idealrationumberofinstances<-totalPWinstances*2
+totalnonPWinstances<-totalinstances-totalPWinstances
+excessinstances<-totalnonPWinstances-totalPWinstances
+whichrowsnonPW<-which(RBIND5.PW$"Plains-wanderer" == 0, arr.ind = TRUE)
+excessremoved<-whichrowsnonPW[1:excessinstances]
+
+#view values	
+totalinstances
+totalPWinstances
+totalnonPWinstances
+idealrationumberofinstances
+excessinstances
+whichrowsnonPW
+excessremoved
+
+
+#remove excess instances from complete dataframe for 50:50 ratio
+alldata50<-RBIND5.PW[-excessremoved,]
+nrow(alldata50)
+ncol(alldata50)
+
+
+#make data frame for removed instances
+copyofexcessremoved=RBIND5.PW[excessremoved,]
+copyofexcessremoved
+#shuffling data	
+set.seed(42)
+#shuffle row indices of dataframe
+rows<-sample(nrow(alldata50))
+#use random vector to reorder dataset
+shuffledalldata50<-alldata50[rows,]
+
+
+set.seed(998)
+# create a testing and training set
+in_training <- createDataPartition(shuffledalldata50$'Plains-wanderer', p = .75, list = FALSE)
+training <- shuffledalldata50[ in_training,]
+testing_split <- shuffledalldata50[-in_training,]
+testing<-rbind(testing_split,copyofexcessremoved)
+
+nrow(training)
+nrow(testing_split)
+nrow(shuffledalldata50)
+nrow(copyofexcessremoved)
+nrow(testing)
+
+training$`Plains-wanderer`
+testing$'Plains-wanderer'
+
+  #save these files
+  save(training,file="training.Rdata")
+load(file="training.Rdata")
+save(testing,file="testing.Rdata")
+load(file="testing.Rdata")
+
+==========================================================================================================
+  MACHINE LEARNING
+==========================================================================================================
+#install packages
+install.packages("caret")
+install.packages("randomForest")
+  
+#load libraries
+library(caret)
+library(randomForest)
+  
+  # Create trainControl object: myControl
+  myControl <- trainControl(
+    method = "cv",
+    number = 10,
+    summaryFunction = twoClassSummary,
+    classProbs = TRUE, # IMPORTANT!
+    verboseIter = TRUE
+  )
+
+# Fit random forest: model
+model <- train(
+  training$`Plains-wanderer`~.,
+  tuneLength = 1,
+  data = testing, 
+  method = "randomForest",
+  trControl = trainControl(myControl
+  )
+)
+
+
+
+
+
