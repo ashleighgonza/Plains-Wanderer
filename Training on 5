@@ -1,3 +1,27 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+
+@ashleighgonza 
+Learn Git and GitHub without any code!
+  Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+
+
+ashleighgonza
+/
+  Plains-Wanderer
+1
+00
+Code Issues 0 Pull requests 0 Actions Projects 0 Wiki Security Insights Settings
+Plains-Wanderer/Training on 5
+@ashleighgonza ashleighgonza Update Training on 5
+ed615ca 2 hours ago
+363 lines (334 sloc)  16.4 KB
+
 #setting working directory	
 setwd("F:/CREATING DATA FRAME")
 
@@ -176,7 +200,7 @@ RBIND5.PW=cbind(RBIND5.FILE,RBIND5_train[,3])
 #name file, minutes and training columns of data frame	
 names(RBIND5.PW)[1]<-paste("file_nUMBER")
 names(RBIND5.PW)[2]<-paste("minute")
-names(RBIND5.PW)[3869]<-paste("Plains-wanderer")
+names(RBIND5.PW)[3869]<-paste("Plains_wanderer")
 
 
 #generating indices names and character strings	
@@ -270,14 +294,30 @@ length(all_names)
 #naming indices column headings	
 colnames(RBIND5.PW)[3:3868]<-paste(all_names)
 
+RBIND5.PW$Plains_wanderer
+install.packages("dplyr")
+install.packages("ggplot2")
+library(dplyr)
+library(ggplot2)
+
+
 #balancing the ratio of positive and negative instances of target value	
 totalinstances<-nrow(RBIND5.PW)
 totalPWinstances<-sum(RBIND5.PW[,3869])
 idealrationumberofinstances<-totalPWinstances*2
 totalnonPWinstances<-totalinstances-totalPWinstances
 excessinstances<-totalnonPWinstances-totalPWinstances
-whichrowsnonPW<-which(RBIND5.PW$"Plains-wanderer" == 0, arr.ind = TRUE)
-excessremoved<-whichrowsnonPW[1:excessinstances]
+
+
+
+#balancing the ratio of positive and negative instances of target value
+totalinstances<-nrow(allfiles_206.PW)
+totalPWinstances<-sum(allfiles_206.PW[,3869])
+idealrationumberofinstances<-totalPWinstances*2
+totalnonPWinstances<-totalinstances-totalPWinstances
+excessinstances<-totalnonPWinstances-totalPWinstances
+whichrowsnonPW<-which(RBIND5.PW$"Plains_wanderer" == 0, arr.ind = TRUE)
+excessremoved<-whichrowsnonPW[1:excessinstances
 
 #view values	
 totalinstances
@@ -294,7 +334,6 @@ alldata50<-RBIND5.PW[-excessremoved,]
 nrow(alldata50)
 ncol(alldata50)
 
-
 #make data frame for removed instances
 copyofexcessremoved=RBIND5.PW[excessremoved,]
 copyofexcessremoved
@@ -304,11 +343,14 @@ set.seed(42)
 rows<-sample(nrow(alldata50))
 #use random vector to reorder dataset
 shuffledalldata50<-alldata50[rows,]
+ 
 
+install.packages("caret")
+library(caret)
 
 set.seed(998)
 # create a testing and training set
-in_training <- createDataPartition(shuffledalldata50$'Plains-wanderer', p = .75, list = FALSE)
+in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .75, list = FALSE)
 training <- shuffledalldata50[ in_training,]
 testing_split <- shuffledalldata50[-in_training,]
 testing<-rbind(testing_split,copyofexcessremoved)
@@ -318,12 +360,17 @@ nrow(testing_split)
 nrow(shuffledalldata50)
 nrow(copyofexcessremoved)
 nrow(testing)
+ncol(training)
+ncol(testing)
+tail(names(training))
 
-training$`Plains-wanderer`
-testing$'Plains-wanderer'
+training[1,3869]
 
-  #save these files
-  save(training,file="training.Rdata")
+training$"Plains_wanderer"
+testing$Plains_wanderer
+
+#save these files
+save(training,file="training.Rdata")
 load(file="training.Rdata")
 save(testing,file="testing.Rdata")
 load(file="testing.Rdata")
@@ -331,33 +378,11 @@ load(file="testing.Rdata")
 ==========================================================================================================
   MACHINE LEARNING
 ==========================================================================================================
-#install packages
-install.packages("caret")
 install.packages("randomForest")
-  
-#load libraries
-library(caret)
 library(randomForest)
-  
-  # Create trainControl object: myControl
-  myControl <- trainControl(
-    method = "cv",
-    number = 10,
-    summaryFunction = twoClassSummary,
-    classProbs = TRUE, # IMPORTANT!
-    verboseIter = TRUE
-  )
 
-# Fit random forest: model
-model <- train(
-  training$`Plains-wanderer`~.,
-  tuneLength = 1,
-  data = training, 
-  method = "rf",
-  trControl = trainControl(myControl
-  )
-)
+training$Plains_wanderer[training$Plains_wanderer == 1] <- "TRUE"
+training$Plains_wanderer[training$Plains_wanderer == 0] <- "FALSE
+training$Plains_wanderer<-factor(training$Plains_wanderer)
 
-
-
-
+training$Plains_wanderer
