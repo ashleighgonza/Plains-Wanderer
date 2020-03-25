@@ -6749,22 +6749,56 @@ rows<-sample(nrow(alldata50))
 #use random vector to reorder dataset
 shuffledalldata50<-alldata50[rows,]
 
-#creating train split
-splitall<-nrow(shuffledalldata50)*0.95
+set.seed(2000)
+# create a testing and training set
+in_training <- createDataPartition(shuffledalldata50$'Plains-wanderer', p = .75, list = FALSE)
+training <- shuffledalldata50[ in_training,]
+testing_split <- shuffledalldata50[-in_training,]
+testing<-rbind(testing_split,copyofexcessremoved)
 
-#split into test and train
-train_all<-shuffledalldata50[split,]
-test_all<-shuffledalldata50[-split,]
+nrow(training)
+nrow(testing_split)
+nrow(shuffledalldata50)
+nrow(copyofexcessremoved)
+nrow(testing)
+
+training$`Plains-wanderer`
+testing$'Plains-wanderer'
 
 #save these files
-save(train_all,file="train_all.Rdata")
-load(file="train_all.Rdata")
-save(test_all,file="train_all.Rdata")
-load(file="test_all.Rdata")
+save(training,file="training.Rdata")
+load(file="training.Rdata")
+save(testing,file="testing.Rdata")
+load(file="testing.Rdata")
 
 =============================================================================================================================================
 MACHINE LEARNING 
 =============================================================================================================================================
+#install packages
+install.packages("caret")
+install.packages("randomForest")
+  
+#load libraries
+library(caret)
+library(randomForest)
+  
+  # Create trainControl object: myControl
+  myControl <- trainControl(
+    method = "cv",
+    number = 10,
+    summaryFunction = twoClassSummary,
+    classProbs = TRUE, # IMPORTANT!
+    verboseIter = TRUE
+  )
 
+# Fit random forest: model
+model <- train(
+  training$`Plains-wanderer`~.,
+  tuneLength = 1,
+  data = testing, 
+  method = "randomForest",
+  trControl = trainControl(myControl
+  )
+)
 
 
