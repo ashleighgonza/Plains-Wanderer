@@ -362,4 +362,15 @@ excessremoved<-whichrowsnonPW[1:excessinstances]
                               training$Plains_wanderer<-factor(training$Plains_wanderer)
                               training$Plains_wanderer
                               
+        
+                              # Create model with default paramters
+                              control <- trainControl(method="repeatedcv", number=10, repeats=3)
+                              seed <- 7
+                              metric <- "Accuracy"
+                              set.seed(seed)
+                              mtry <- sqrt(ncol(training))
+                              tunegrid <- expand.grid(.mtry=mtry)
+                              rf_default <- train(Plains_wanderer~., data=training, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
+                              print(rf_default)
+                              
                               
