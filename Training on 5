@@ -352,12 +352,11 @@ library(randomForest)
 model <- train(
   training$`Plains-wanderer`~.,
   tuneLength = 1,
-  data = testing, 
-  method = "randomForest",
+  data = training, 
+  method = "rf",
   trControl = trainControl(myControl
   )
 )
-
 
 
 
