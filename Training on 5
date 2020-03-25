@@ -1,27 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@ashleighgonza 
-Learn Git and GitHub without any code!
-  Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
-
-
-ashleighgonza
-/
-  Plains-Wanderer
-1
-00
-Code Issues 0 Pull requests 0 Actions Projects 0 Wiki Security Insights Settings
-Plains-Wanderer/Training on 5
-@ashleighgonza ashleighgonza Update Training on 5
-ed615ca 2 hours ago
-363 lines (334 sloc)  16.4 KB
-
 #setting working directory	
 setwd("F:/CREATING DATA FRAME")
 
@@ -311,78 +287,79 @@ excessinstances<-totalnonPWinstances-totalPWinstances
 
 
 #balancing the ratio of positive and negative instances of target value
-totalinstances<-nrow(allfiles_206.PW)
-totalPWinstances<-sum(allfiles_206.PW[,3869])
+totalinstances<-nrow(RBIND5.PW)
+totalPWinstances<-sum(RBIND5.PW[,3869])
 idealrationumberofinstances<-totalPWinstances*2
 totalnonPWinstances<-totalinstances-totalPWinstances
 excessinstances<-totalnonPWinstances-totalPWinstances
 whichrowsnonPW<-which(RBIND5.PW$"Plains_wanderer" == 0, arr.ind = TRUE)
-excessremoved<-whichrowsnonPW[1:excessinstances
-
-#view values	
-totalinstances
-totalPWinstances
-totalnonPWinstances
-idealrationumberofinstances
-excessinstances
-whichrowsnonPW
-excessremoved
-
-
-#remove excess instances from complete dataframe for 50:50 ratio
-alldata50<-RBIND5.PW[-excessremoved,]
-nrow(alldata50)
-ncol(alldata50)
-
-#make data frame for removed instances
-copyofexcessremoved=RBIND5.PW[excessremoved,]
-copyofexcessremoved
-#shuffling data	
-set.seed(42)
-#shuffle row indices of dataframe
-rows<-sample(nrow(alldata50))
-#use random vector to reorder dataset
-shuffledalldata50<-alldata50[rows,]
- 
-
-install.packages("caret")
-library(caret)
-
-set.seed(998)
-# create a testing and training set
-in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .75, list = FALSE)
-training <- shuffledalldata50[ in_training,]
-testing_split <- shuffledalldata50[-in_training,]
-testing<-rbind(testing_split,copyofexcessremoved)
-
-nrow(training)
-nrow(testing_split)
-nrow(shuffledalldata50)
-nrow(copyofexcessremoved)
-nrow(testing)
-ncol(training)
-ncol(testing)
-tail(names(training))
-
-training[1,3869]
-
-training$"Plains_wanderer"
-testing$Plains_wanderer
-
-#save these files
-save(training,file="training.Rdata")
-load(file="training.Rdata")
-save(testing,file="testing.Rdata")
-load(file="testing.Rdata")
-
-==========================================================================================================
-  MACHINE LEARNING
-==========================================================================================================
-install.packages("randomForest")
-library(randomForest)
-
-training$Plains_wanderer[training$Plains_wanderer == 1] <- "TRUE"
-training$Plains_wanderer[training$Plains_wanderer == 0] <- "FALSE
-training$Plains_wanderer<-factor(training$Plains_wanderer)
-
-training$Plains_wanderer
+excessremoved<-whichrowsnonPW[1:excessinstances]
+                              
+                              #view values	
+                              totalinstances
+                              totalPWinstances
+                              totalnonPWinstances
+                              idealrationumberofinstances
+                              excessinstances
+                              whichrowsnonPW
+                              excessremoved
+                              
+                              
+                              #remove excess instances from complete dataframe for 50:50 ratio
+                              alldata50<-RBIND5.PW[-excessremoved,]
+                              nrow(alldata50)
+                              ncol(alldata50)
+                              
+                              #make data frame for removed instances
+                              copyofexcessremoved=RBIND5.PW[excessremoved,]
+                              copyofexcessremoved
+                              #shuffling data	
+                              set.seed(42)
+                              #shuffle row indices of dataframe
+                              rows<-sample(nrow(alldata50))
+                              #use random vector to reorder dataset
+                              shuffledalldata50<-alldata50[rows,]
+                              
+                              
+                              install.packages("caret")
+                              library(caret)
+                              
+                              set.seed(998)
+                              # create a testing and training set
+                              in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .75, list = FALSE)
+                              training <- shuffledalldata50[ in_training,]
+                              testing_split <- shuffledalldata50[-in_training,]
+                              testing<-rbind(testing_split,copyofexcessremoved)
+                              
+                              nrow(training)
+                              nrow(testing_split)
+                              nrow(shuffledalldata50)
+                              nrow(copyofexcessremoved)
+                              nrow(testing)
+                              ncol(training)
+                              ncol(testing)
+                              tail(names(training))
+                              
+                              training[1,3869]
+                              
+                              training$"Plains_wanderer"
+                              testing$Plains_wanderer
+                              
+                              #save these files
+                              save(training,file="training.Rdata")
+                              load(file="training.Rdata")
+                              save(testing,file="testing.Rdata")
+                              load(file="testing.Rdata")
+                              
+                              ==========================================================================================================
+                                MACHINE LEARNING
+                              ==========================================================================================================
+                                install.packages("randomForest")
+                              library(randomForest)
+                              
+                              training$Plains_wanderer[training$Plains_wanderer == 1] <- "TRUE"
+                              training$Plains_wanderer[training$Plains_wanderer == 0] <- "FALSE"
+                              training$Plains_wanderer<-factor(training$Plains_wanderer)
+                              training$Plains_wanderer
+                              
+                              
