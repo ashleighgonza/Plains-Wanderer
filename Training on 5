@@ -2,20 +2,30 @@
 setwd("F:/CREATING DATA FRAME")
 
 #packages install
+install.packages("caret", dependencies = TRUE)
+install.packages("devtools")
 install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("caret")
-install.packages("randomForest")
-install.packages("caret")
-install.packages("e1071")
 
-#load libraries
+if (packageVersion("devtools") < 1.6) {
+  install.packages("devtools")
+}
+devtools::install_github("hadley/lazyeval")
+devtools::install_github("hadley/dplyr")
+
+install.packages("ggplot2")
+install.packages("randomForest")
+install.packages("e1071")
+install.packages("mlbench")
+
+
+library(devtools)
+library(caret)
 library(dplyr)
 library(ggplot2)
-library(caret)
 library(randomForest)
-library(caret)
 library(e1071)
+library(mlbench)
+
 
 
 #loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections	
