@@ -1,6 +1,22 @@
 #setting working directory	
 setwd("F:/CREATING DATA FRAME")
 
+#packages install
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("caret")
+install.packages("randomForest")
+install.packages("caret")
+install.packages("e1071")
+
+#load libraries
+library(dplyr)
+library(ggplot2)
+library(caret)
+library(randomForest)
+library(caret)
+library(e1071)
+
 
 #loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections	
 file1_ACI<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ACI.csv",TRUE,",")
@@ -271,10 +287,6 @@ length(all_names)
 colnames(RBIND5.PW)[3:3868]<-paste(all_names)
 
 RBIND5.PW$Plains_wanderer
-install.packages("dplyr")
-install.packages("ggplot2")
-library(dplyr)
-library(ggplot2)
 
 
 #balancing the ratio of positive and negative instances of target value	
@@ -321,12 +333,9 @@ rows<-sample(nrow(alldata50))
 shuffledalldata50<-alldata50[rows,]
 
 
-install.packages("caret")
-library(caret)
-
-set.seed(998)
-# create a testing and training set
-in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .75, list = FALSE)
+# create train and test split
+set.seed(100)
+in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .90, list = FALSE)
 training <- shuffledalldata50[ in_training,]
 testing_split <- shuffledalldata50[-in_training,]
 testing<-rbind(testing_split,copyofexcessremoved)
@@ -354,16 +363,6 @@ load(file="testing.Rdata")
 ==========================================================================================================
   MACHINE LEARNING
 ==========================================================================================================
-install.packages("randomForest")
-install.packages("caret")
-install.packages("mlbench")
-install.packages("e1071")
-
-library(randomForest)
-library(caret)
-library(mlbench)
-library(e1071)
-
 training$Plains_wanderer[training$Plains_wanderer == 1] <- "TRUE"
 training$Plains_wanderer[training$Plains_wanderer == 0] <- "FALSE"
 training$Plains_wanderer<-factor(training$Plains_wanderer)
