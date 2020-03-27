@@ -185,7 +185,6 @@ file5_data.frameSPT=cbind(file5_data.frameRVT,file5_SPT[,-1])
 file5_data.frameSUM=cbind(file5_data.frameSPT,file5_SUM[,-1])
 file5_data.frameCOMPLETE=cbind(file5_data.frameSUM,file5_Indices[,-1])
 
-
 #rbinding acoustic indices values for all files together into one data frame
 RBIND2=rbind(file1_data.frameCOMPLETE,file2_data.frameCOMPLETE)
 RBIND3=rbind(RBIND2,file3_data.frameCOMPLETE)
@@ -202,7 +201,6 @@ names(RBIND5.PW)[1]<-paste("file_nUMBER")
 names(RBIND5.PW)[2]<-paste("minute")
 names(RBIND5.PW)[3869]<-paste("Plains_wanderer")
 RBIND5.PW[,3869]
-
 
 #generating indices names and character strings
 #set nscalar and nIndices
@@ -322,12 +320,13 @@ excessremoved
 
 #remove excess instances from complete dataframe for 50:50 ratio
 alldata50<-RBIND5.PW[-excessremoved,]
-nrow(alldata50)
+nrow(alldata50)  ##should equal idealrationumberofinstances for balanced dataset
 ncol(alldata50)
 
 #Make data frame for removed instances
 copyofexcessremoved=RBIND5.PW[excessremoved,]
 copyofexcessremoved
+
 #shuffling data
 set.seed(42)
 #shuffle row indices of dataframe
@@ -335,15 +334,17 @@ rows<-sample(nrow(alldata50))
 #use random vector to reorder dataset
 shuffledalldata50<-alldata50[rows,]
 
-#Labelling Plains_wanderer integer 1/0 to factor level Yes/No
-level1= factor(sample(shuffledalldata50$Plains_wanderer==1,replace=TRUE))
-level2= factor(sample(shuffledalldata50$Plains_wanderer==0,replace=FALSE))
-
 #Creating train and test split with file names and minutes:w
 set.seed(100)
-in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .90, list = FALSE)
-training_w<- shuffledalldata50[ in_training,]
+percentage_split=0.95
+in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = percentage_split, list = FALSE)
+training_w<- shuffledalldata50[in_training,]
+nrow(training_w) ##should ~ equal percentage_split x nrow(alldata50)
+percentage_split*nrow(alldata50)
 testing_split <- shuffledalldata50[-in_training,]
+
+##is this part needed? should I just make the test set 
+#Adding in removed non Plains_wanderer minutes (unbalanced test set)
 testing_w<-rbind(testing_split,copyofexcessremoved)
 
 nrow(training_w)
@@ -360,10 +361,10 @@ training_w$"Plains_wanderer"
 testing_w$"Plains_wanderer"
 
 #Create training without file names and minutes
-training<-training[,c(-1,-2)]
+training<-training_w[,c(-1,-2)]
 
 #Create testing without file names and minutes
-testing<-testing[,c(-1,-2)]
+testing<-testing_w[,c(-1,-2)]
 
 #View headers
 colnames(training)
@@ -372,6 +373,22 @@ colnames(testing)
 #Making syntactically valid names for Random Forest model 
 make.names(training, unique = FALSE, allow_ = TRUE)
 make.names(testing, unique = FALSE, allow_ = TRUE)
+
+#view Plains_wanderer integers before changing to factors: training and test
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#changing Plains_wanderer integers to factors: training and test
+training$Plains_wanderer = cut(training$Plains_wanderer,2,labels=c('No','Yes'))
+testing$Plains_wanderer = cut(testing$Plains_wanderer,2,labels=c('No','Yes'))
+
+#view Plains_wanderer factors after changing from integers: training and test
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#Check Plains_wanderer class:factor
+class(training$Plains_wanderer)
+class(testing$Plains_wanderer)
 
 #Save training and testing files
 save(training,file="training.Rdata")
@@ -382,67 +399,71 @@ load(file="testing.Rdata")
 ==========================================================================================================
   MACHINE LEARNING
 ==========================================================================================================
-  
-  #Create trainControl object 
-  control<- trainControl(
-    method = "cv",
-    number = 10, 
-    #Print out
-    verboseIter = TRUE,
-    classProbs = TRUE, 
-    summaryFunction = twoClassSummary
-    )
 
-# Create model with default paramters
-seed <- 1000
-training_w_default<-train(Plains_wanderer~.,data=training_w,
-                          method="ranger",
-                          trControl=control,
-                          metric="ROC")
+#Define the control
+control <- trainControl(method = "cv",
+                          number = 10,
+                          search = "grid")
 
 
-#Print model
-print(training_w_default) 
+#Create and run model with default paramters
+set.seed(1234)
+training_default <- train(Plains_wanderer~.,
+                    data = training,
+                    method = "rf",
+                    metric = "Accuracy",
+                    trControl = control)
+print(training_default)
 
-#Plot model
-plot(training_w_default) 
-
-
-
-
-
-
-
-
-===========================================================================
-  
-  
-  #EXPERIMENT WITH DIFFERENT
-  
-  training_w_tuned<-train(Plains_wanderer~.,data=training_w,
-                          method="ranger",
-                          mtry=87,
-                          min_node_size=1,
-                          splitrule="gini",
-                          trControl=control,
-                          metric="Accuracy")
-
-#Print model
-print(training_w_tuned)
-
-#Plot model
-plot(training_w_tuned) 
+#the algorithm uses 500 trees and tested three different values of mtry: 2, 87 and 3869
+#The final value used for the model was mtry = 87 with an accuracy of 0.86. 
+#Trying to get a higher accuracy score
 
 
-#Predict on testing set
-probability_prediction<-predict(training_w_default,testing) 
+#search best mtry: test values 85:95
+set.seed(1234)
+tuneGrid <- expand.grid(.mtry = c(85: 95))
+training_mtry <- train(Plains_wanderer~.,
+                 data = training,
+                 method = "rf",
+                 metric = "Accuracy",
+                 tuneGrid = tuneGrid,
+                 trControl = control,
+                 importance = TRUE,
+                 nodesize = 14,
+                 ntree = 300)
+print(training_mtry)
 
-#Confusion matrix 
+#accuracy was used to select the optimal model using the largest value
+#the final value used for the model was mtry = 90
 
-#Cut predicted probabilities at given thresholdto turn probabilities into factor of class predictions
-ifelse() with factor()
-pos_or_neg<-ifelse(probability_prediction>threshold, positive_class,negative_class)
-p_class<-factor(pos_or_neg, levels=levels(test_values))
+#store the best value of mtry
+training_mtry$bestTune$mtry
 
-#Calculate a confusion matrix
-confusionMatrix(p_class,test_values)
+#Can store it and use it when need to tune other parameters
+max(training_mtry$results$Accuracy)
+best_mtry <- training_mtry$bestTune$mtry 
+best_mtry
+
+#Searching best maxnodes: creating loop to evaluate best number of maxnodes
+store_maxnode <- list()
+tuneGrid <- expand.grid(.mtry = best_mtry)
+for(maxnodes in c(1: 10)) {
+  set.seed(1234)
+  training_maxnode <- train(Plains_wanderer~.,
+                      data = training,
+                      method = "rf",
+                      metric = "Accuracy",
+                      tuneGrid = tuneGrid,
+                      trControl = control,
+                      importance = TRUE,
+                      nodesize = 14,
+                      maxnodes = maxnodes,
+                      ntree = 300)
+  current_iteration <- toString(maxnodes)
+  store_maxnode[[current_iteration]] <- training_maxnode
+}
+results_mtry <- resamples(store_maxnode)
+summary(results_mtry)
+
+#if see increasing values of accuracy just do 10 at a time
