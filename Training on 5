@@ -1,7 +1,7 @@
-#setting working directory	
-setwd("F:/CREATING DATA FRAME")
+#Set working directory 
+setwd("~/Desktop/Honour R/CREATING DATA FRAME")
 
-#packages install
+#packages install (if have not already installed)
 install.packages("caret", dependencies = TRUE)
 install.packages("devtools")
 install.packages("dplyr")
@@ -19,16 +19,14 @@ install.packages("mlbench")
 
 
 library(devtools)
-library(caret)
 library(dplyr)
+library(caret)
 library(ggplot2)
 library(randomForest)
 library(e1071)
 library(mlbench)
 
-
-
-#loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections	
+#Loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections
 file1_ACI<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ACI.csv",TRUE,",")
 file1_BGN<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.BGN.csv",TRUE,",")
 file1_CVR<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.CVR.csv",TRUE,",")
@@ -188,24 +186,25 @@ file5_data.frameSUM=cbind(file5_data.frameSPT,file5_SUM[,-1])
 file5_data.frameCOMPLETE=cbind(file5_data.frameSUM,file5_Indices[,-1])
 
 
-#rbinding acoustic indices values for all files together into one data frame	
+#rbinding acoustic indices values for all files together into one data frame
 RBIND2=rbind(file1_data.frameCOMPLETE,file2_data.frameCOMPLETE)
 RBIND3=rbind(RBIND2,file3_data.frameCOMPLETE)
 RBIND4=rbind(RBIND3,file4_data.frameCOMPLETE)
 RBIND5=rbind(RBIND4,file5_data.frameCOMPLETE)
 
-#load in and attach training file to total data frame	
+#load in and attach training file to total data frame
 RBIND5_train<-read.csv("RBIND5_train.csv",FALSE,",")
 RBIND5.FILE=cbind(RBIND5_train[,1],RBIND5)
 RBIND5.PW=cbind(RBIND5.FILE,RBIND5_train[,3])
 
-#name file, minutes and training columns of data frame	
+#name file, minutes and training columns of data frame
 names(RBIND5.PW)[1]<-paste("file_nUMBER")
 names(RBIND5.PW)[2]<-paste("minute")
 names(RBIND5.PW)[3869]<-paste("Plains_wanderer")
+RBIND5.PW[,3869]
 
 
-#generating indices names and character strings	
+#generating indices names and character strings
 #set nscalar and nIndices
 nscalar<-256
 nIndices<-26
@@ -293,20 +292,15 @@ my.namesIndices
 all_names=c(my.namesACI,my.namesBGN,my.namesCVR,my.namesDIF,my.namesENT,my.namesEVN,my.namesOSC,my.namesPMN,my.namesR3D,my.namesRHZ,my.namesRNG,my.namesRPS,my.namesRVT,my.namesSPT,my.namesSUM,my.namesIndices)
 length(all_names)
 
-#naming indices column headings	
+#naming indices column headings
 colnames(RBIND5.PW)[3:3868]<-paste(all_names)
 
-RBIND5.PW$Plains_wanderer
-
-
-#balancing the ratio of positive and negative instances of target value	
+#balancing the ratio of positive and negative instances of target value
 totalinstances<-nrow(RBIND5.PW)
 totalPWinstances<-sum(RBIND5.PW[,3869])
 idealrationumberofinstances<-totalPWinstances*2
 totalnonPWinstances<-totalinstances-totalPWinstances
 excessinstances<-totalnonPWinstances-totalPWinstances
-
-
 
 #balancing the ratio of positive and negative instances of target value
 totalinstances<-nrow(RBIND5.PW)
@@ -317,7 +311,7 @@ excessinstances<-totalnonPWinstances-totalPWinstances
 whichrowsnonPW<-which(RBIND5.PW$"Plains_wanderer" == 0, arr.ind = TRUE)
 excessremoved<-whichrowsnonPW[1:excessinstances]
 
-#view values	
+#view values
 totalinstances
 totalPWinstances
 totalnonPWinstances
@@ -326,45 +320,60 @@ excessinstances
 whichrowsnonPW
 excessremoved
 
-
 #remove excess instances from complete dataframe for 50:50 ratio
 alldata50<-RBIND5.PW[-excessremoved,]
 nrow(alldata50)
 ncol(alldata50)
 
-#make data frame for removed instances
+#Make data frame for removed instances
 copyofexcessremoved=RBIND5.PW[excessremoved,]
 copyofexcessremoved
-#shuffling data	
+#shuffling data
 set.seed(42)
 #shuffle row indices of dataframe
 rows<-sample(nrow(alldata50))
 #use random vector to reorder dataset
 shuffledalldata50<-alldata50[rows,]
 
+#Labelling Plains_wanderer integer 1/0 to factor level Yes/No
+level1= factor(sample(shuffledalldata50$Plains_wanderer==1,replace=TRUE))
+level2= factor(sample(shuffledalldata50$Plains_wanderer==0,replace=FALSE))
 
-# create train and test split
+#Creating train and test split with file names and minutes:w
 set.seed(100)
 in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = .90, list = FALSE)
-training <- shuffledalldata50[ in_training,]
+training_w<- shuffledalldata50[ in_training,]
 testing_split <- shuffledalldata50[-in_training,]
-testing<-rbind(testing_split,copyofexcessremoved)
+testing_w<-rbind(testing_split,copyofexcessremoved)
 
-nrow(training)
+nrow(training_w)
 nrow(testing_split)
 nrow(shuffledalldata50)
 nrow(copyofexcessremoved)
-nrow(testing)
-ncol(training)
-ncol(testing)
-tail(names(training))
+nrow(testing_w)
+ncol(training_w)
+ncol(testing_w)
+tail(names(training_w))
 
-training[1,3869]
+#Viewing
+training_w$"Plains_wanderer"
+testing_w$"Plains_wanderer"
 
-training$"Plains_wanderer"
-testing$Plains_wanderer
+#Create training without file names and minutes
+training<-training[,c(-1,-2)]
 
-#save these files
+#Create testing without file names and minutes
+testing<-testing[,c(-1,-2)]
+
+#View headers
+colnames(training)
+colnames(testing)
+
+#Making syntactically valid names for Random Forest model 
+make.names(training, unique = FALSE, allow_ = TRUE)
+make.names(testing, unique = FALSE, allow_ = TRUE)
+
+#Save training and testing files
 save(training,file="training.Rdata")
 load(file="training.Rdata")
 save(testing,file="testing.Rdata")
@@ -373,25 +382,67 @@ load(file="testing.Rdata")
 ==========================================================================================================
   MACHINE LEARNING
 ==========================================================================================================
-training$Plains_wanderer[training$Plains_wanderer == 1] <- "TRUE"
-training$Plains_wanderer[training$Plains_wanderer == 0] <- "FALSE"
-training$Plains_wanderer<-factor(training$Plains_wanderer)
-training$Plains_wanderer
-
-# Create trainControl object
-control<- trainControl(
-    method = "repeatcv",
-    number = 10,
-    repeats=3)
+  
+  #Create trainControl object 
+  control<- trainControl(
+    method = "cv",
+    number = 10, 
+    #Print out
+    verboseIter = TRUE,
+    classProbs = TRUE, 
+    summaryFunction = twoClassSummary
+    )
 
 # Create model with default paramters
-seed <- 7
-metric <- "Accuracy"
-set.seed(seed)
-mtry <- sqrt(ncol(training))
-tunegrid <- expand.grid(.mtry=mtry)
-rf_default <- train(Plains_wanderer~., data=training, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
-print(rf_default)
+seed <- 1000
+training_w_default<-train(Plains_wanderer~.,data=training_w,
+                          method="ranger",
+                          trControl=control,
+                          metric="ROC")
+
+
+#Print model
+print(training_w_default) 
+
+#Plot model
+plot(training_w_default) 
 
 
 
+
+
+
+
+
+===========================================================================
+  
+  
+  #EXPERIMENT WITH DIFFERENT
+  
+  training_w_tuned<-train(Plains_wanderer~.,data=training_w,
+                          method="ranger",
+                          mtry=87,
+                          min_node_size=1,
+                          splitrule="gini",
+                          trControl=control,
+                          metric="Accuracy")
+
+#Print model
+print(training_w_tuned)
+
+#Plot model
+plot(training_w_tuned) 
+
+
+#Predict on testing set
+probability_prediction<-predict(training_w_default,testing) 
+
+#Confusion matrix 
+
+#Cut predicted probabilities at given thresholdto turn probabilities into factor of class predictions
+ifelse() with factor()
+pos_or_neg<-ifelse(probability_prediction>threshold, positive_class,negative_class)
+p_class<-factor(pos_or_neg, levels=levels(test_values))
+
+#Calculate a confusion matrix
+confusionMatrix(p_class,test_values)
