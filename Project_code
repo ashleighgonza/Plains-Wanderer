@@ -6859,6 +6859,126 @@ training_default <- train(Plains_wanderer~.,
 print(training_default)
 
 #the algorithm uses 500 trees and tested three different values of mtry: 2, 87 and 3869
-#The final value used for the model was mtry = X, accuracy = 0.8750000
+#The final value used for the model was mtry = X, accuracy = X
 #Trying to get a higher accuracy 
+
+==========================
+  BEST MTRY
+==========================
+  
+  #search best mtry: test values 1:10
+  set.seed(123)
+tuneGrid <- expand.grid(.mtry = c(1:10))
+training_mtry<- train(Plains_wanderer~.,
+                      data = training,
+                      method = "rf",
+                      metric = "Accuracy",
+                      tuneGrid = tuneGrid,
+                      trControl = control, 
+                      importance = TRUE,
+                      nodesize = 14,
+                      ntree = 300)
+print(training_mtry)
+
+#the final value used for the model was mtry = X, accuracy = X
+
+plot(training_mtry)
+
+#store the best value of mtry 
+training_mtry$bestTune$mtry
+
+#Can store it and use it when need to tune other parameters
+max(training_mtry$results$Accuracy)
+
+#Output 
+best_mtry <- training_mtry$bestTune$mtry 
+best_mtry 
+
+==========================
+  BEST MAXNODES
+==========================
+  
+  #Searching best maxnodes: creating loop to evaluate best number of maxnodes
+  store_maxnode <- list()
+tuneGrid <- expand.grid(.mtry = best_mtry)
+for(maxnodes in c(1:10)) {
+  set.seed(123)
+  training_maxnode <- train(Plains_wanderer~.,
+                            data = training,
+                            method = "rf",
+                            metric = "Accuracy",
+                            tuneGrid = tuneGrid,
+                            trControl = control,
+                            importance = TRUE,
+                            nodesize = 14,
+                            maxnodes = maxnodes,
+                            ntree = 300)
+  current_iteration <- toString(maxnodes)
+  store_maxnode[[current_iteration]] <- training_maxnode
+}
+results_mtry <- resamples(store_maxnode)
+summary(results_mtry)
+
+
+==========================
+  BEST NTREE 
+==========================
+  
+  store_maxtrees <- list()
+for (ntree in c(250, 300, 350, 400, 450, 500, 550, 600, 800, 1000, 2000)) {
+  set.seed(123)
+  training_maxtrees <- train(Plains_wanderer~.,
+                       data = training,
+                       method = "rf",
+                       metric = "Accuracy",
+                       tuneGrid = tuneGrid,
+                       trControl = control,
+                       importance = TRUE,
+                       nodesize = 14,
+                       maxnodes = 10,
+                       ntree = ntree)
+  key <- toString(ntree)
+  store_maxtrees[[key]] <- training_maxtrees
+}
+results_tree <- resamples(store_maxtrees)
+summary(results_tree)
+
+  #if see increasing values of accuracy just do 10 at a time 
+  #could lead to over fitting? just try nodesize instead?
+  
+
+======================
+FITTING
+======================
+  
+  training_fit <- train(Plains_wanderer~.,
+                  training,
+                  method = "rf",
+                  metric = "Accuracy",
+                  tuneGrid = tuneGrid,
+                  trControl = control,
+                  importance = TRUE,
+                  nodesize = 14,
+                  ntree = 250,
+                  maxnodes = 5)
+
+training_fit$predicted
+summary(training_fit)
+
+==========================
+  PREDICTING USING MODEL 
+==========================
+  
+#Using model to predict on testing dataset 
+prediction<-predict(training_fit, testing, type="prob")
+print(prediction)
+plot(prediction)
+
+==========================
+EVALUATING MODEL
+==========================
+#Explore optimal classification threshold? 
+#Generate confusion matrix
+
+#I have code for this elsewhere and will explore this further once I have the results from the model for the entire dataset!
 
