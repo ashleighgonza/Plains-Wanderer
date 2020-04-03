@@ -1,5 +1,32 @@
-#setting working directory
-setwd("F:/CREATING DATA FRAME")
+#Set working directory 
+setwd("~/Desktop/Honour R/CREATING DATA FRAME")
+
+#packages install (if have not already installed)
+install.packages("dplyr")
+
+if (packageVersion("devtools") < 1.6) {
+  install.packages("devtools")
+}
+devtools::install_github("hadley/lazyeval")
+devtools::install_github("hadley/dplyr")
+
+install.packages("caret", dependencies = TRUE)
+install.packages("devtools")
+install.packages("ggplot2")
+install.packages("randomForest")
+install.packages("e1071")
+install.packages("mlbench")
+install.packages("PresenceAbsence")
+
+
+library(devtools)
+library(dplyr)
+library(ggplot2)
+library(e1071)
+library(mlbench)
+library(caret)
+library(randomForest)
+library(PresenceAbsence)
 
 #loading in and naming individual Towsey.Acoustic.csv files with corresponding pw detections 
 file1_ACI<-read.csv("S4A05079_20170916_181202__Towsey.Acoustic.ACI.csv",TRUE,",")
@@ -6596,21 +6623,26 @@ RBIND202=rbind(RBIND201,file202_data.frameCOMPLETE)
 RBIND203=rbind(RBIND202,file203_data.frameCOMPLETE)
 RBIND204=rbind(RBIND203,file204_data.frameCOMPLETE)
 RBIND205=rbind(RBIND204,file205_data.frameCOMPLETE)
-allfiles_206=rbind(RBIND205,file206_data.frameCOMPLETE)
-
-#load in and attach training file to total data frame
-206_train<-read.csv("206_train.csv",FALSE,",")
-allfiles_206.FILE=cbind(206_train[,3],allfiles_206)
-allfiles_206.PW=cbind(allfiles_206.FILE,206_train[,5])
+RBIND206=rbind(RBIND205,file206_data.frameCOMPLETE)
 
 #save this file
-save(allfiles_206.PW,file="allfiles_206.PW.Rdata")
-load(file="allfiles_206.PW.Rdata")
+save(RBIND206,file="RBIND206.Rdata")
+load(file="RBIND206.Rdata")
+
+#load in and attach training file to total data frame
+train206<-read.csv("train206.csv",FALSE,",")
+RBIND206.FILE=cbind(train206[,1],RBIND206)
+RBIND206.PW=cbind(RBIND206.FILE,train206[,4])
+
+#save this file
+save(RBIND206.PW,file="RBIND206.PW.Rdata")
+load(file="RBIND206.PW.Rdata")
 
 #name file, minutes and training columns of data frame
-names(allfiles_206.PW)[1]<-paste("file_names")
-names(allfiles_206.PW)[2]<-paste("minute")
-names(allfiles_206.PW)[3869]<-paste("Plains-wanderer")
+names(RBIND206.PW)[1]<-paste("file_nUMBER")
+names(RBIND206.PW)[2]<-paste("minute")
+names(RBIND206.PW)[3869]<-paste("Plains_wanderer")
+RBIND206.PW[,3869]
 
 #generating indices names and character strings
 #set nscalar and nIndices
@@ -6700,24 +6732,25 @@ my.namesIndices
 all_names=c(my.namesACI,my.namesBGN,my.namesCVR,my.namesDIF,my.namesENT,my.namesEVN,my.namesOSC,my.namesPMN,my.namesR3D,my.namesRHZ,my.namesRNG,my.namesRPS,my.namesRVT,my.namesSPT,my.namesSUM,my.namesIndices)
 length(all_names)
 
-#save this string
-save(all_names,file="all_names.Rdata")
-load(file="all_names.Rdata")
-
 #naming indices column headings
-colnames(allfiles_206.PW)[3:3868]<-paste(all_names)
-
-#save frame
-save(allfiles_206.PW,file="allfiles_206.PW.Rdata")
-load(file="allfiles_206.PW.Rdata")
+colnames(RBIND206.PW)[3:3868]<-paste(all_names)
+ncol(RBIND206.PW)
+nrow(RBIND206.PW)
 
 #balancing the ratio of positive and negative instances of target value
-totalinstances<-nrow(allfiles_206.PW)
-totalPWinstances<-sum(allfiles_206.PW[,3869])
+totalinstances<-nrow(RBIND206.PW)
+totalPWinstances<-sum(RBIND206.PW[,3869])
 idealrationumberofinstances<-totalPWinstances*2
 totalnonPWinstances<-totalinstances-totalPWinstances
 excessinstances<-totalnonPWinstances-totalPWinstances
-whichrowsnonPW<-which(allfiles_206.PW$"Plains-wanderer" == 0, arr.ind = TRUE)
+
+#balancing the ratio of positive and negative instances of target value
+totalinstances<-nrow(RBIND206.PW)
+totalPWinstances<-sum(RBIND206.PW[,3869])
+idealrationumberofinstances<-totalPWinstances*2
+totalnonPWinstances<-totalinstances-totalPWinstances
+excessinstances<-totalnonPWinstances-totalPWinstances
+whichrowsnonPW<-which(RBIND206.PW$"Plains_wanderer" == 0, arr.ind = TRUE)
 excessremoved<-whichrowsnonPW[1:excessinstances]
 
 #view values
@@ -6729,76 +6762,103 @@ excessinstances
 whichrowsnonPW
 excessremoved
 
-#make data frame for removed instances 
-copyofexcessremoved=allfiles_206.PW[excessremoved,]
-copyofexcessremoved
-
 #remove excess instances from complete dataframe for 50:50 ratio
-alldata50<-allfiles_206.PW[-excessremoved,]
-nrow(alldata50)
+alldata50<-RBIND206.PW[-excessremoved,]
+nrow(alldata50)  ##should equal idealrationumberofinstances for balanced dataset
 ncol(alldata50)
 
-#save these files
-save(alldata50,file="alldata50.Rdata")
-load(file="alldata50.Rdata")
+#Make data frame for removed instances
+copyofexcessremoved=RBIND206.PW[excessremoved,]
+copyofexcessremoved
 
 #shuffling data
-set.seed(100)
+set.seed(42)
 #shuffle row indices of dataframe
 rows<-sample(nrow(alldata50))
 #use random vector to reorder dataset
 shuffledalldata50<-alldata50[rows,]
 
-set.seed(2000)
-# create a testing and training set
-in_training <- createDataPartition(shuffledalldata50$'Plains-wanderer', p = .75, list = FALSE)
-training <- shuffledalldata50[ in_training,]
+#Creating train and test split with file names and minutes:w
+set.seed(100)
+percentage_split=0.95
+in_training <- createDataPartition(shuffledalldata50$'Plains_wanderer', p = percentage_split, list = FALSE)
+training_w<- shuffledalldata50[in_training,]
+nrow(training_w) ##should ~ equal percentage_split x nrow(alldata50)
+percentage_split*nrow(alldata50)
 testing_split <- shuffledalldata50[-in_training,]
-testing<-rbind(testing_split,copyofexcessremoved)
 
-nrow(training)
+#Adding in removed non Plains_wanderer minutes (unbalanced test set)
+testing_w<-rbind(testing_split,copyofexcessremoved)
+
+nrow(training_w)
 nrow(testing_split)
 nrow(shuffledalldata50)
 nrow(copyofexcessremoved)
-nrow(testing)
+nrow(testing_w)
+ncol(training_w)
+ncol(testing_w)
+tail(names(training_w))
 
-training$`Plains-wanderer`
-testing$'Plains-wanderer'
+#Viewing
+training_w$"Plains_wanderer"
+testing_w$"Plains_wanderer"
 
-#save these files
+#Create training without file names and minutes
+training<-training_w[,c(-1,-2)]
+
+#Create testing without file names and minutes
+testing<-testing_w[,c(-1,-2)]
+
+#View headers
+colnames(training)
+colnames(testing)
+
+#Making syntactically valid names for Random Forest model 
+make.names(training, unique = FALSE, allow_ = TRUE)
+make.names(testing, unique = FALSE, allow_ = TRUE)
+
+#view Plains_wanderer integers before changing to factors: training and test
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#changing Plains_wanderer integers to factors: training and test
+training$Plains_wanderer = cut(training$Plains_wanderer,2,labels=c('No','Yes'))
+testing$Plains_wanderer = cut(testing$Plains_wanderer,2,labels=c('No','Yes'))
+
+#view Plains_wanderer factors after changing from integers: training and test
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#Check Plains_wanderer class:factor
+class(training$Plains_wanderer)
+class(testing$Plains_wanderer)
+
+#Save training and testing files
 save(training,file="training.Rdata")
 load(file="training.Rdata")
 save(testing,file="testing.Rdata")
 load(file="testing.Rdata")
 
-=============================================================================================================================================
-MACHINE LEARNING 
-=============================================================================================================================================
-#install packages
-install.packages("caret")
-install.packages("randomForest")
-  
-#load libraries
-library(caret)
-library(randomForest)
-  
-  # Create trainControl object: myControl
-  myControl <- trainControl(
-    method = "cv",
-    number = 10,
-    summaryFunction = twoClassSummary,
-    classProbs = TRUE, # IMPORTANT!
-    verboseIter = TRUE
-  )
+===============================================
+MACHINE LEARNING
+===============================================
 
-# Fit random forest: model
-model <- train(
-  training$`Plains-wanderer`~.,
-  tuneLength = 1,
-  data = testing, 
-  method = "randomForest",
-  trControl = trainControl(myControl
-  )
-)
+#Define the control
+control <- trainControl(method = "cv",
+                          number = 10,
+                          search = "grid")
 
+
+#Create and run model with default paramters
+set.seed(123)
+training_default <- train(Plains_wanderer~.,
+                          data = training,
+                          method = "rf",
+                          metric = "Accuracy",
+                          trControl = control)
+print(training_default)
+
+#the algorithm uses 500 trees and tested three different values of mtry: 2, 87 and 3869
+#The final value used for the model was mtry = X, accuracy = 0.8750000
+#Trying to get a higher accuracy 
 
