@@ -1,0 +1,351 @@
+setwd("~/Desktop/Honour R/CREATING DATA FRAME/My_files")
+my_files<-list.files(path="~/Desktop/Honour R/CREATING DATA FRAME/My_files")
+my_files <- list.files(path = "~/Desktop/Honour R/CREATING DATA FRAME/My_files", pattern = '*ACI.csv*')
+my_files <- substr(my_files, 0, 24)
+my_indicies <- c('ACI', 'BGN', 'CVR', 'DIF', 'ENT', 'EVN', 'Indices','OSC','PMN','R3D','RHZ','RNG','RPS','RVT','SPT','SUM')
+all_data <- NULL
+for (current_file in my_files) {
+  csv_filenames <- paste0(current_file, '__Towsey.Acoustic.', my_indicies, '.csv')
+  file_data <- NULL
+  for (csv_filename in csv_filenames) {
+    print(csv_filename)
+    current_index_data <- read.csv(csv_filename)
+    current_index_data <- current_index_data[,-1]
+    if (is.null(file_data)) {
+      file_data <- current_index_data
+    } else {
+      file_data <- cbind(file_data, current_index_data)
+    }
+    
+  }
+  file_data$filename <- current_file
+  file_data$minute_number <- 0:59
+  if (is.null(all_data)) {
+    all_data <- file_data
+  } else {
+    all_data <- rbind(all_data, file_data)
+  }
+  
+}
+
+
+nscalar<-256
+nIndices<-26
+#naming ACI
+prefixACI <- "ACI"
+suffixACI<-seq(1:nscalar)
+my.namesACI<-c(paste(prefixACI,suffixACI,sep=""))
+my.namesACI
+#naming BGN
+prefixBGN<-"BGN"
+suffixBGN<-seq(1:nscalar)
+my.namesBGN<-c(paste(prefixBGN,suffixBGN,sep=""))
+my.namesBGN
+#namingCVR
+prefixCVR<-"CVR"
+suffixCVR<-seq(1:nscalar)
+my.namesCVR<-c(paste(prefixCVR,suffixCVR,sep=""))
+my.namesCVR
+#namingDIF
+prefixDIF<-"DIF"
+suffixDIF<-seq(1:nscalar)
+my.namesDIF<-c(paste(prefixDIF,suffixDIF,sep=""))
+my.namesDIF
+#naming ENT
+prefixENT<-"ENT"
+suffixENT<-seq(1:nscalar)
+my.namesENT<-c(paste(prefixENT,suffixENT,sep=""))
+my.namesENT
+#naming EVN
+prefixEVN<-"EVN"
+suffixEVN<-seq(1:nscalar)
+my.namesEVN<-c(paste(prefixEVN,suffixEVN,sep=""))
+my.namesEVN
+#naming Indices
+prefixIndices<-"Indices"
+suffixIndices<-seq(1:nIndices)
+my.namesIndices<-c(paste(prefixIndices,suffixIndices,sep=""))
+my.namesIndices
+#naming OSC
+prefixOSC<-"OSC"
+suffixOSC<-seq(1:nscalar)
+my.namesOSC<-c(paste(prefixOSC,suffixOSC,sep=""))
+my.namesOSC
+#naming PMN
+prefixPMN<-"PMN"
+suffixPMN<-seq(1:nscalar)
+my.namesPMN<-c(paste(prefixPMN,suffixPMN,sep=""))
+my.namesPMN
+#naming R3D
+prefixR3D<-"R3D"
+suffixR3D<-seq(1:nscalar)
+my.namesR3D<-c(paste(prefixR3D,suffixR3D,sep=""))
+my.namesR3D
+#naming RHZ
+prefixRHZ<-"RHZ"
+suffixRHZ<-seq(1:nscalar)
+my.namesRHZ<-c(paste(prefixRHZ,suffixRHZ,sep=""))
+my.namesRHZ
+#naming RNG
+prefixRNG<-"RNG"
+suffixRNG<-seq(1:nscalar)
+my.namesRNG<-c(paste(prefixRNG,suffixRNG,sep=""))
+my.namesRNG
+#naming RPS
+prefixRPS<-"RPS"
+suffixRPS<-seq(1:nscalar)
+my.namesRPS<-c(paste(prefixRPS,suffixRPS,sep=""))
+my.namesRPS
+#namingRVT
+prefixRVT<-"RVT"
+suffixRVT<-seq(1:nscalar)
+my.namesRVT<-c(paste(prefixRVT,suffixRVT,sep=""))
+my.namesRVT
+#naming SPT
+prefixSPT<-"SPT"
+suffixSPT<-seq(1:nscalar)
+my.namesSPT<-c(paste(prefixSPT,suffixSPT,sep=""))
+my.namesSPT
+#naming SUM
+prefixSUM<-"SUM"
+suffixSUM<-seq(1:nscalar)
+my.namesSUM<-c(paste(prefixSUM,suffixSUM,sep=""))
+my.namesSUM
+#joining character strings
+all_indices_names=c(my.namesACI,my.namesBGN,my.namesCVR,my.namesDIF,my.namesENT,my.namesEVN,my.namesIndices,my.namesOSC,my.namesPMN,my.namesR3D,my.namesRHZ,my.namesRNG,my.namesRPS,my.namesRVT,my.namesSPT,my.namesSUM)
+length(all_indices_names)
+
+#Naming column headings
+colnames(all_data)[1:3866]<-paste(all_indices_names)
+
+tail(names(all_data))
+
+#MAKE SURE IT'S ALL MATCHING 
+all_data$filename[1]
+all_data$filename[61]
+all_data$filename[121]
+all_data$filename[181]
+all_data$filename[241]
+all_data$filename[301]
+all_data$filename[361]
+all_data$filename[421]
+all_data$filename[481]
+all_data$filename[541]
+all_data$filename[601]
+all_data$filename[661]
+all_data$filename[721]
+all_data$filename[781]
+all_data$filename[841]
+all_data$filename[901]
+all_data$filename[961]
+all_data$filename[1021]
+all_data$filename[1081]
+all_data$filename[1141]
+all_data$filename[1201]
+all_data$filename[1261]
+all_data$filename[1321]
+all_data$filename[1381]
+all_data$filename[1441]
+all_data$filename[1501]
+all_data$filename[1561]
+all_data$filename[1621]
+all_data$filename[1681]
+all_data$filename[1741]
+all_data$filename[1801]
+all_data$filename[1861]
+all_data$filename[1921]
+all_data$filename[1981]
+all_data$filename[2041]
+all_data$filename[2101]
+all_data$filename[2161]
+all_data$filename[2221]
+all_data$filename[2281]
+all_data$filename[2341]
+all_data$filename[2401]
+all_data$filename[2461]
+all_data$filename[2521]
+all_data$filename[2581]
+all_data$filename[2641]
+all_data$filename[2701]
+all_data$filename[2761]
+all_data$filename[2821]
+all_data$filename[2881]
+all_data$filename[2941]
+all_data$filename[3001]
+all_data$filename[3061]
+all_data$filename[3121]
+all_data$filename[3181]
+all_data$filename[3241]
+all_data$filename[3301]
+all_data$filename[3361]
+all_data$filename[3421]
+all_data$filename[3481]
+all_data$filename[3541]
+all_data$filename[3601]
+all_data$filename[3661]
+all_data$filename[3721]
+all_data$filename[3781]
+all_data$filename[3841]
+all_data$filename[3901]
+all_data$filename[3961]
+all_data$filename[4021]
+all_data$filename[4081]
+all_data$filename[4141]
+all_data$filename[4201]
+all_data$filename[4261]
+all_data$filename[4321]
+all_data$filename[4381]
+all_data$filename[4441]
+all_data$filename[4501]
+all_data$filename[4561]
+all_data$filename[4621]
+all_data$filename[4681]
+all_data$filename[4741]
+all_data$filename[4801]
+all_data$filename[4861]
+all_data$filename[4921]
+all_data$filename[4981]
+all_data$filename[5041]
+all_data$filename[5101]
+all_data$filename[5161]
+all_data$filename[5221]
+all_data$filename[5281]
+all_data$filename[5341]
+all_data$filename[5401]
+all_data$filename[5461]
+all_data$filename[5521]
+all_data$filename[5581]
+all_data$filename[5641]
+all_data$filename[5701]
+all_data$filename[5761]
+all_data$filename[5821]
+all_data$filename[5881]
+all_data$filename[5941]
+all_data$filename[6001]
+all_data$filename[6061]
+all_data$filename[6121]
+all_data$filename[6181]
+all_data$filename[6241]
+all_data$filename[6301]
+all_data$filename[6361]
+all_data$filename[6421]
+all_data$filename[6481]
+all_data$filename[6541]
+all_data$filename[6601]
+all_data$filename[6661]
+all_data$filename[6721]
+all_data$filename[6781]
+all_data$filename[6841]
+all_data$filename[6901]
+all_data$filename[6961]
+all_data$filename[7021]
+all_data$filename[7081]
+all_data$filename[7141]
+all_data$filename[7201]
+all_data$filename[7261]
+all_data$filename[7321]
+all_data$filename[7381]
+all_data$filename[7441]
+all_data$filename[7501]
+all_data$filename[7561]
+all_data$filename[7621]
+all_data$filename[7681]
+all_data$filename[7741]
+all_data$filename[7801]
+all_data$filename[7861]
+all_data$filename[7921]
+all_data$filename[7981]
+all_data$filename[8041]
+all_data$filename[8101]
+all_data$filename[8161]
+all_data$filename[8221]
+all_data$filename[8281]
+all_data$filename[8341]
+all_data$filename[8401]
+all_data$filename[8461]
+all_data$filename[8521]
+all_data$filename[8581]
+all_data$filename[8641]
+all_data$filename[8701]
+all_data$filename[8761]
+all_data$filename[8821]
+all_data$filename[8881]
+all_data$filename[8941]
+all_data$filename[9001]
+all_data$filename[9061]
+all_data$filename[9121]
+all_data$filename[9181]
+all_data$filename[9241]
+all_data$filename[9301]
+all_data$filename[9361]
+all_data$filename[9421]
+all_data$filename[9481]
+all_data$filename[9541]
+all_data$filename[9601]
+all_data$filename[9661]
+all_data$filename[9721]
+all_data$filename[9781]
+all_data$filename[9841]
+all_data$filename[9901]
+all_data$filename[9961]
+all_data$filename[10021]
+all_data$filename[10081]
+all_data$filename[10141]
+all_data$filename[10201]
+all_data$filename[10261]
+all_data$filename[10321]
+all_data$filename[10381]
+all_data$filename[10441]
+all_data$filename[10501]
+all_data$filename[10561]
+all_data$filename[10621]
+all_data$filename[10681]
+all_data$filename[10741]
+all_data$filename[10801]
+all_data$filename[10861]
+all_data$filename[10921]
+all_data$filename[10981]
+all_data$filename[11041]
+all_data$filename[11101]
+all_data$filename[11161]
+all_data$filename[11221]
+all_data$filename[11281]
+all_data$filename[11341]
+all_data$filename[11401]
+all_data$filename[11461]
+all_data$filename[11521]
+all_data$filename[11581]
+all_data$filename[11641]
+all_data$filename[11701]
+all_data$filename[11761]
+all_data$filename[11821]
+all_data$filename[11881]
+all_data$filename[11941]
+all_data$filename[12001]
+all_data$filename[12061]
+all_data$filename[12121]
+all_data$filename[12181]
+
+1+1=
+
+
+
+train206<-read.csv("train206.csv",FALSE,",")
+label_filenames <- train206[,2]
+label_filenames <- substr(label_filenames, 0, 24)
+substr(label_filenames, 0, 24)
+
+
+if (!all(label_filenames == all_data$filename)) {
+  stop("labels data does not align with index combined dataframe. This could be due to the files being processed in a different order")
+}
+
+
+all_data <- cbind(train206[,c(1,4)], all_data)
+write.csv(all_data, 'all_data.csv')
+
+
+
+
+
+
