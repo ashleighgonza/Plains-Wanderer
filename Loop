@@ -116,23 +116,125 @@ length(all_indices_names)
 
 #Naming column headings
 colnames(all_data)[1:3866]<-paste(all_indices_names)
+head(names(all_data))
+tail(names(all_data))
+
+#3866 with indices, 3867,3868 minute and filename (3869 will be PW)
 
 train_204<-read.csv("train_204.csv",FALSE,",")
+nrow(all_data)==nrow(train_204)
 extract_filenames<-train_204[,2]
 extract_filenames<-substr(extract_filenames, 0, 24)
-label_filenames<-substr(extract_filenames, 0, 24)
-nrow(all_data)==nrow(train_204)
 
-if (!all(label_filenames == all_data$filename)) {
+if (!all(extract_filenames == all_data$filename)) {
   stop("labels data does not align with index combined dataframe. This could be due to the files being processed in a different order")
 }
 
 Plains_wanderer<-train_204[,4]
 all_data<-cbind(all_data,Plains_wanderer)
+tail(names(all_data))
 all_data$Plains_wanderer
 
-tail(names(all_data))
+ncol(all_data)==3869
+
+TRY THE AVERAING OUT
+
 write.csv(all_data, 'all_data.csv')
 
+===================================
+===================================
+  
+options(shiny.maxRequestSize=800000000)
+all_data<-read.csv("all_data.csv")
+tail(names(all_data))
+nrow(all_data)==204*60
+ncol(all_data)==3869
+
+#Creating balanced labelled dataset
+total_instances<-nrow(all_data)
+total_presence<-sum(all_data$Plains_wanderer)
+total_absence<-nrow(all_data)-total_presence
+ideal_balanced_instances<-total_presence*2
+ideal_excess<-total_presence
+excess_quantity=total_absence-ideal_excess
+rows_excess<-which(all_data$Plains_wanderer == 0, arr.ind = TRUE)
+excess_remove<-rows_excess[1:excess_quantity]
+all_data_balanced<-all_data[-excess_remove,]
+ncol(all_data_balanced)==3869
+nrow(all_data_balanced)==ideal_balanced_instances
 
 
+#Shuffling data
+set.seed(420)
+#shuffle row indices of dataframe
+rows<-sample(nrow(all_data_balanced))
+shuffled_all_data_balanced<-all_data_balanced[rows,]
+
+install.packages("dplyr")
+install.packages("caret", dependencies = TRUE)
+
+library(dplyr)
+library(caret)
+
+#Creating train and test split 
+set.seed(1234)
+split_percent=0.95
+in_training <- createDataPartition(shuffled_all_data_balanced$Plains_wanderer, p = split_percent, list = FALSE)
+training<- shuffled_all_data_balanced[in_training,]
+nrow(training) ##should ~ equal percentage_split x nrow(alldata50)
+testing<- shuffled_all_data_balanced[-in_training,]
+
+nrow(training)
+nrow(testing)
+
+#Viewing
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#View headers
+colnames(training)
+colnames(testing)
+
+#changing Plains_wanderer integers to factors
+training$Plains_wanderer = cut(training$Plains_wanderer,2,labels=c('No','Yes'))
+testing$Plains_wanderer = cut(testing$Plains_wanderer,2,labels=c('No','Yes'))
+
+#view Plains_wanderer factors 
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#Confirm Plains_wanderer class:factor
+class(training$Plains_wanderer)
+class(testing$Plains_wanderer)
+
+#Write training and testing files as .csv
+DO LATER
+
+
+====================================
+====================================
+
+WExluding ID columns of model as features
+
+#Making syntactically valid names for Random Forest model 
+make.names(training, unique = FALSE, allow_ = TRUE)
+make.names(testing, unique = FALSE, allow_ = TRUE)
+
+#Define the control
+control <- trainControl(method = "cv",
+                        number = 10,
+                        search = "grid")
+
+
+#Create and run model with default paramters
+set.seed(1234)
+training_default <- train(Plains_wanderer~.,
+                          data = training,
+                          method = "rf",
+                          metric = "Accuracy",
+                          trControl = control)
+print(training_default)
+
+#the algorithm uses 500 trees and tested three different values of mtry: 2, 87 and 3869
+#The final value used for the model was mtry = X, accuracy = X
+#Trying to get a higher accuracy 
