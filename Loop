@@ -129,6 +129,7 @@ if (!all(label_filenames == all_data$filename)) {
 
 Plains_wanderer<-train_204[,4]
 all_data<-cbind(all_data,Plains_wanderer)
+all_data$Plains_wanderer
 
 tail(names(all_data))
 write.csv(all_data, 'all_data.csv')
