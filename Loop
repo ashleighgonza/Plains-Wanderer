@@ -118,52 +118,20 @@ length(all_indices_names)
 colnames(all_data)[1:3866]<-paste(all_indices_names)
 
 train_204<-read.csv("train_204.csv",FALSE,",")
-label=filenames=train_204[,2]
-train_204[,2]
-length(all_data$filename)
-
-
-label_filenames <- substr(label_filenames, 0, 24)
-substr(label_filenames, 0, 24)
-
+extract_filenames<-train_204[,2]
+extract_filenames<-substr(extract_filenames, 0, 24)
+label_filenames<-substr(extract_filenames, 0, 24)
+nrow(all_data)==nrow(train_204)
 
 if (!all(label_filenames == all_data$filename)) {
   stop("labels data does not align with index combined dataframe. This could be due to the files being processed in a different order")
 }
 
-
-all_data <- cbind(train204[,c(1,4)], all_data)
-write.csv(all_data, 'all_data.csv')
-
-
-
+Plains_wanderer<-train_204[,4]
+all_data<-cbind(all_data,Plains_wanderer)
 
 tail(names(all_data))
-
-
-
-cbind(all_data,train204[,2])
-
-write.csv(all_data$filename, 'all_data_filename.csv')
-
-all_data$filename
-
-install.packages("dplyr")
-library(dplyr)
-train_filenames=data.frame(train204[,2])
-colnames(train_filenames)
-
-train204...2.
-
-new_names <- intersect(filename(all_data), names(df2))
-bind_rows(df1[,new_names], df2[,new_names])
-
-
-
-
-
-
-
+write.csv(all_data, 'all_data.csv')
 
 
 
