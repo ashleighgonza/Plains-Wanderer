@@ -1,0 +1,184 @@
+setwd("~/Desktop/Honour R/CREATING DATA FRAME/My_files")
+my_files<-list.files(path="~/Desktop/Honour R/CREATING DATA FRAME/My_files")
+my_files <- list.files(path = "~/Desktop/Honour R/CREATING DATA FRAME/My_files", pattern = '*ACI.csv*')
+
+#TESTING FOR 95 BINS ONLY 
+#COULD EVEN SUMMARISE / TAKE AVERAGE ABOVE 1000 Hz 
+ACI_test<-read.csv("S4A05095_20171015_182702__Towsey.Acoustic.ENT.csv")
+ACI_reduced<-ACI_test[,c(-1,-(97:256))]
+
+install.packages("tidyverse")
+library(tidyverse)
+
+Means=rowMeans(ACI_reduced[1,c(25:96)]))
+
+
+my_files <- substr(my_files, 0, 24)
+my_indicies <- c('ACI', 'BGN', 'CVR', 'DIF', 'ENT', 'EVN','OSC','PMN','R3D','RHZ','RNG','RPS','RVT','SPT','SUM')
+all_data <- NULL
+for (current_file in my_files) {
+  csv_filenames <- paste0(current_file, '__Towsey.Acoustic.', my_indicies, '.csv')
+  file_data <- NULL
+  for (csv_filename in csv_filenames) {
+    print(csv_filename)
+    current_index_data <- read.csv(csv_filename)
+    current_index_data <- current_index_data[,c(-1,-(97:256))]
+    if (is.null(file_data)) {
+      file_data <- current_index_data
+    } else {
+      file_data <- cbind(file_data, current_index_data)
+    }
+    
+  }
+  file_data$filename <- current_file
+  file_data$minute_number <- 0:59
+  if (is.null(all_data)) {
+    all_data <- file_data
+  } else {
+    all_data <- rbind(all_data, file_data)
+  }
+  
+}
+
+#FOR INDICES, INNER AND OUTER LOOP AND CBIND THEM ALL ON FINAL AT THE END 26
+
+my_files <- substr(my_files, 0, 24)
+just_indicies <- 'Indices'
+just_indices_data <- NULL
+for (current_file in my_files) {
+  csv_filenames <- paste0(current_file, '__Towsey.Acoustic.', just_indicies, '.csv')
+  file_data <- NULL
+  for (csv_filename in csv_filenames) {
+    print(csv_filename)
+    current_index_data <- read.csv(csv_filename)
+    current_index_data <- current_index_data[,c(-1,-(25:26))]
+    if (is.null(file_data)) {
+      file_data <- current_index_data
+    } else {
+      file_data <- cbind(file_data, current_index_data)
+    }
+    
+  }
+  file_data$filename <- current_file
+  file_data$minute_number <- 0:59
+  if (is.null(just_indices_data)) {
+    just_indices_data <- file_data
+  } else {
+    just_indices_data <- rbind(just_indices_data, file_data)
+  }
+  
+}
+
+just_indices_data<-just_indices_data[,c(-(1:2),-(22:26))]
+
+all_data<-cbind(just_indices_data,all_data)
+
+
+nscalar<-96
+nIndices<-19
+#naming ACI
+prefixACI <- "ACI"
+suffixACI<-seq(1:nscalar)
+my.namesACI<-c(paste(prefixACI,suffixACI,sep=""))
+my.namesACI
+#naming BGN
+prefixBGN<-"BGN"
+suffixBGN<-seq(1:nscalar)
+my.namesBGN<-c(paste(prefixBGN,suffixBGN,sep=""))
+my.namesBGN
+#namingCVR
+prefixCVR<-"CVR"
+suffixCVR<-seq(1:nscalar)
+my.namesCVR<-c(paste(prefixCVR,suffixCVR,sep=""))
+my.namesCVR
+#namingDIF
+prefixDIF<-"DIF"
+suffixDIF<-seq(1:nscalar)
+my.namesDIF<-c(paste(prefixDIF,suffixDIF,sep=""))
+my.namesDIF
+#naming ENT
+prefixENT<-"ENT"
+suffixENT<-seq(1:nscalar)
+my.namesENT<-c(paste(prefixENT,suffixENT,sep=""))
+my.namesENT
+#naming EVN
+prefixEVN<-"EVN"
+suffixEVN<-seq(1:nscalar)
+my.namesEVN<-c(paste(prefixEVN,suffixEVN,sep=""))
+my.namesEVN
+#naming Indices
+prefixIndices<-"Indices"
+suffixIndices<-seq(1:nIndices)
+my.namesIndices<-c(paste(prefixIndices,suffixIndices,sep=""))
+my.namesIndices
+#naming OSC
+prefixOSC<-"OSC"
+suffixOSC<-seq(1:nscalar)
+my.namesOSC<-c(paste(prefixOSC,suffixOSC,sep=""))
+my.namesOSC
+#naming PMN
+prefixPMN<-"PMN"
+suffixPMN<-seq(1:nscalar)
+my.namesPMN<-c(paste(prefixPMN,suffixPMN,sep=""))
+my.namesPMN
+#naming R3D
+prefixR3D<-"R3D"
+suffixR3D<-seq(1:nscalar)
+my.namesR3D<-c(paste(prefixR3D,suffixR3D,sep=""))
+my.namesR3D
+#naming RHZ
+prefixRHZ<-"RHZ"
+suffixRHZ<-seq(1:nscalar)
+my.namesRHZ<-c(paste(prefixRHZ,suffixRHZ,sep=""))
+my.namesRHZ
+#naming RNG
+prefixRNG<-"RNG"
+suffixRNG<-seq(1:nscalar)
+my.namesRNG<-c(paste(prefixRNG,suffixRNG,sep=""))
+my.namesRNG
+#naming RPS
+prefixRPS<-"RPS"
+suffixRPS<-seq(1:nscalar)
+my.namesRPS<-c(paste(prefixRPS,suffixRPS,sep=""))
+my.namesRPS
+#namingRVT
+prefixRVT<-"RVT"
+suffixRVT<-seq(1:nscalar)
+my.namesRVT<-c(paste(prefixRVT,suffixRVT,sep=""))
+my.namesRVT
+#naming SPT
+prefixSPT<-"SPT"
+suffixSPT<-seq(1:nscalar)
+my.namesSPT<-c(paste(prefixSPT,suffixSPT,sep=""))
+my.namesSPT
+#naming SUM
+prefixSUM<-"SUM"
+suffixSUM<-seq(1:nscalar)
+my.namesSUM<-c(paste(prefixSUM,suffixSUM,sep=""))
+my.namesSUM
+#joining character strings
+all_indices_names=c(my.namesIndices,my.namesACI,my.namesBGN,my.namesCVR,my.namesDIF,my.namesENT,my.namesEVN,my.namesOSC,my.namesPMN,my.namesR3D,my.namesRHZ,my.namesRNG,my.namesRPS,my.namesRVT,my.namesSPT,my.namesSUM)
+column_name_length<-length(all_indices_names)
+#Naming column headings
+colnames(all_data)[1:column_name_length]<-paste(all_indices_names)
+
+tail(all_data)
+
+train_204<-read.csv("train_204.csv",FALSE,",")
+extract_filenames<-train_204[,2]
+extract_filenames<-substr(extract_filenames, 0, 24)
+label_filenames<-substr(extract_filenames, 0, 24)
+nrow(all_data)==nrow(train_204)
+
+if (!all(label_filenames == all_data$filename)) {
+  stop("labels data does not align with index combined dataframe. This could be due to the files being processed in a different order")
+}
+
+Plains_wanderer<-train_204[,4]
+all_data<-cbind(all_data,Plains_wanderer)
+
+tail(names(all_data))
+write.csv(all_data, 'all_data.csv')
+
+
+
