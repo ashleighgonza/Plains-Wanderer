@@ -1,0 +1,105 @@
+==========
+MACHINE LEARNING
+==========
+ 
+install.packages("caret")
+install.packages("devtools")
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("randomForest")
+install.packages("e1071")
+install.packages("mlbench")
+install.packages("PresenceAbsence")
+install.packages("pROC")
+    
+library(caret)   
+library(devtools)
+library(ggplot2)
+library(dplyr)
+library(randomForest)
+library(e1071)
+library(mlbench)
+library(PresenceAbsence)
+library(pROC)
+
+
+options(shiny.maxRequestSize=800000000)
+all_data<-read.csv("all_data.csv",TRUE)
+all_data<-all_data[,-1]
+tail(names(all_data))
+nrow(all_data)==204*60
+ncol(all_data)==412
+
+#Creating balanced labelled dataset
+total_instances<-nrow(all_data)
+total_presence<-sum(all_data$Plains_wanderer)
+total_absence<-nrow(all_data)-total_presence
+ideal_balanced_instances<-total_presence*2
+ideal_excess<-total_presence
+excess_quantity=total_absence-ideal_excess
+rows_excess<-which(all_data$Plains_wanderer == 0, arr.ind = TRUE)
+excess_remove<-rows_excess[1:excess_quantity]
+all_data_balanced<-all_data[-excess_remove,]
+ncol(all_data_balanced)==412
+nrow(all_data_balanced)==ideal_balanced_instances
+
+
+#Shuffling data
+set.seed(420)
+#shuffle row indices of dataframe
+rows<-sample(nrow(all_data_balanced))
+shuffled_all_data_balanced<-all_data_balanced[rows,]
+
+
+#Creating train and test split 
+set.seed(1234)
+split_percent=0.90
+in_training <- createDataPartition(shuffled_all_data_balanced$Plains_wanderer, p = split_percent, list = FALSE)
+training<- shuffled_all_data_balanced[in_training,]
+nrow(training) ##should ~ equal percentage_split x nrow(alldata50)
+testing<- shuffled_all_data_balanced[-in_training,]
+
+nrow(training)
+nrow(testing)
+
+#Viewing
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#View headers
+colnames(training)
+colnames(testing)
+
+#changing Plains_wanderer integers to factors
+training$Plains_wanderer = cut(training$Plains_wanderer,2,labels=c('No','Yes'))
+testing$Plains_wanderer = cut(testing$Plains_wanderer,2,labels=c('No','Yes'))
+
+#view Plains_wanderer factors 
+training$Plains_wanderer
+testing$Plains_wanderer
+
+#Confirm Plains_wanderer class:factor
+class(training$Plains_wanderer)
+class(testing$Plains_wanderer)
+
+#WRITE CSV FILE EARLIER ON!? 
+  
+============
+MACHINE LEARNING 
+============
+
+#Define the control
+control <- trainControl(method = "cv",
+                        number = 10,
+                        search = "grid",
+                        verboseIter = TRUE,
+                        allowParallel = TRUE)
+
+#Create and run model with default paramters
+set.seed(1234)
+training_default <- train(Plains_wanderer~.,
+                          data = training[,-(410:411)],
+                          method = "rf",
+                          metric = "Accuracy",
+                          trControl = control)
+print(training_default)
