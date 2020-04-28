@@ -1,0 +1,259 @@
+
+> setwd("~/Plains_wanderer R Directory Files/My_files")
+
+  ==========
+    MACHINE LEARNING
+  ==========
+    
+  install.packages("caret")
+  install.packages("devtools")
+  install.packages("ggplot2")
+  install.packages("dplyr")
+  install.packages("randomForest")
+  install.packages("e1071")
+  install.packages("mlbench")
+  install.packages("PresenceAbsence")
+  install.packages("pROC")
+  
+  library(caret)   
+  library(devtools)
+  library(ggplot2)
+  library(dplyr)
+  library(randomForest)
+  library(e1071)
+  library(mlbench)
+  library(PresenceAbsence)
+  library(pROC)
+  
+  
+  options(shiny.maxRequestSize=500000000)
+  all_data<-read.csv("all_data.csv",TRUE)
+  all_data<-all_data[,-1]
+  tail(names(all_data))
+  nrow(all_data)==204*60
+  ncol(all_data)==412
+  
+  #Creating balanced labelled dataset
+  total_instances<-nrow(all_data)
+  total_presence<-sum(all_data$Plains_wanderer)
+  total_absence<-nrow(all_data)-total_presence
+  ideal_balanced_instances<-total_presence*2
+  ideal_excess<-total_presence
+  excess_quantity=total_absence-ideal_excess
+  rows_excess<-which(all_data$Plains_wanderer == 0, arr.ind = TRUE)
+  excess_remove<-rows_excess[1:excess_quantity]
+  all_data_balanced<-all_data[-excess_remove,]
+  ncol(all_data_balanced)==412
+  nrow(all_data_balanced)==ideal_balanced_instances
+  
+  
+  #Shuffling data
+  set.seed(420)
+  #shuffle row indices of dataframe
+  rows<-sample(nrow(all_data_balanced))
+  shuffled_all_data_balanced<-all_data_balanced[rows,]
+  
+  
+  #Creating train and test split 
+  set.seed(1234)
+  split_percent=0.90
+  in_training <- createDataPartition(shuffled_all_data_balanced$Plains_wanderer, p = split_percent, list = FALSE)
+  training<- shuffled_all_data_balanced[in_training,]
+  nrow(training) ##should ~ equal percentage_split x nrow(alldata50)
+  testing<- shuffled_all_data_balanced[-in_training,]
+  
+  nrow(training)
+  nrow(testing)
+  
+  #Viewing
+  training$Plains_wanderer
+  testing$Plains_wanderer
+  
+  #View headers
+  colnames(training)
+  colnames(testing)
+  
+  #changing Plains_wanderer integers to factors
+  training$Plains_wanderer = cut(training$Plains_wanderer,2,labels=c('No','Yes'))
+  testing$Plains_wanderer = cut(testing$Plains_wanderer,2,labels=c('No','Yes'))
+  
+  #view Plains_wanderer factors 
+  training$Plains_wanderer
+  testing$Plains_wanderer
+  
+  #Confirm Plains_wanderer class:factor
+  class(training$Plains_wanderer)
+  class(testing$Plains_wanderer)
+  
+  #WRITE CSV FILE EARLIER ON!? 
+  
+  ============
+    MACHINE LEARNING 
+  ============
+    
+    #Define the control
+    control <- trainControl(method = "cv",
+                            number = 10,
+                            search = "grid",
+                            savePredictions = "final",
+                            summaryFunction = twoClassSummary,
+                            classProbs = TRUE,
+                            verboseIter = TRUE,
+                            allowParallel = TRUE)
+  #WOW GREAT FUNCTION 
+  
+  
+  #Create and run model with default paramters
+  set.seed(1234)
+  training_default <- train(Plains_wanderer~.,
+                            data = training[,-(410:411)],
+                            method = "rf",
+                            metric = "Accuracy",
+                            importance = TRUE,
+                            trControl = control)
+  print(training_default)
+  plot(training_default)
+  
+  #HOW TO SAVE THESE RESULTS INTO A TUNING GRID 
+  
+  #search best mtry: test values 400:410 (first best accuracy value)
+  set.seed(1234)
+  tuneGrid <- expand.grid(.mtry = c(399:409))
+  training_mtry<- train(Plains_wanderer~.,
+                        data = training[,-(410:411)],
+                        method = "rf",
+                        metric = "Accuracy",
+                        tuneGrid = tuneGrid,
+                        trControl = control, 
+                        importance = TRUE)
+  print(training_mtry)
+  training_mtry$bestTune$mtry
+  
+  #Can store it and use it when need to tune other parameters
+  max(training_mtry$results$Accuracy)
+  
+  
+  #Output 
+  best_mtry <- training_mtry$bestTune$mtry 
+  best_mtry 
+  
+  =============================================
+  set.seed(1234)
+  tuneGrid <- expand.grid(.mtry = c(200:210))
+  training_mtry2<- train(Plains_wanderer~.,
+                        data = training[,-(410:411)],
+                        method = "rf",
+                        metric = "Accuracy",
+                        tuneGrid = tuneGrid,
+                        trControl = control, 
+                        importance = TRUE)
+  print(training_mtry2)
+  mtry2=206=0.8690164=kappa=0.738
+  print(training_mtry)
+  mtry=408=0.8839=kappa=0.7678689
+  
+  ===============================================
+    
+    
+  #Searching best maxnodes: creating loop to evaluate best number of maxnodes
+  store_maxnode <- list()
+  tuneGrid <- expand.grid(.mtry = best_mtry)
+  for(maxnodes in c(1:10)) {
+    set.seed(1234)
+    training_maxnode <- train(Plains_wanderer~.,
+                              data = training[,-(410:411)],
+                              method = "rf",
+                              metric = "Accuracy",
+                              tuneGrid = tuneGrid,
+                              trControl = control,
+                              importance = TRUE,
+                              maxnodes = maxnodes)
+    current_iteration <- toString(maxnodes)
+    store_maxnode[[current_iteration]] <- training_maxnode
+  }
+  results_mtry <- resamples(store_maxnode)
+  summary(results_mtry)
+  
+  
+    
+  #2 points acciracy 
+  
+  #search best mtry: values 200:210 (second best accuracy value)
+  
+  #F IT SHOULD BE TRAINING training[,-(410:411)], not just training GRR. 
+  
+  
+  
+  #BEST FINAL SCORES / DECISION RE MTRY AND ACCURACY 
+  #WHAT HAPPENS IF I PLOT ROC INSTEAD 
+  
+  
+  
+  
+  #KAPPA 1 = pefect, 0 = chance, 0.5 = moderate
+  http://web2.cs.columbia.edu/~julia/courses/CS6998/Interrater_agreement.Kappa_statistic.pdf
+  
+  #BEST MTRY
+  
+  #BEST NTREE
+  
+  #BEST TUNELENGTH 
+  
+  #INVESTIGATE THE ALGORITHMS AGAIN 
+  
+  #PREDICTIONS ARE IN training_default$pred
+  sorted as per CV fols, to sort as in original data frame:
+    model_rf$pred[order(model_rf$pred$rowIndex),2]
+  #OBTAINING CONFUSION MATRIX
+  confusionMatrix(training_default$pred[order(training_default$pred$rowIndex),2], iris_2$Species)
+  
+  
+  In a two class setting often specifying 0.5 as the threshold probability is sub-optimal. The optimal threshold can be found after training by optimizing Kappa or Youden's J statistic (or any other preferred) as a function of the probability. Here is an example:
+
+sapply(1:40/40, function(x){
+  versicolor <- model_rf$pred[order(model_rf$pred$rowIndex),4]
+  class <- ifelse(versicolor >=x, "versicolor", "virginica")
+  mat <- confusionMatrix(class, iris_2$Species)
+  kappa <- mat$overall[2]
+  res <- data.frame(prob = x, kappa = kappa)
+  return(res)
+})
+Here the highest kappa is not obtained at threshold == 0.5 but at 0.1. This should be used carefully because it can lead to over-fitting.
+
+
+#BEST MTRY
+#Using model to predict on testing dataset 
+prediction<-predict(training, testing, type="prob")
+print(prediction)
+plot(prediction)
+
+#Using model to predict on testing dataset 							
+prediction<-predict(training, testing, type="prob")	
+print(prediction)
+plot(prediction)
+
+#TODAY'S TESTING
+  prediction<-predict(training_mtry2, testing, type="raw")
+  class_prediction <-ifelse(prediction > 0.50,
+                            "Yes",
+                            "No")
+  print(prediction)
+  plot(prediction)
+  confusionMatrix(class_prediction)
+  
+  #TODAY'S TESTING (CLASS, FOR CONFUSION MATRIX)
+  prediction<-predict(training_default, testing, type="raw")	
+  print(prediction)
+  plot(prediction)
+  
+  testing$Plains_wanderer
+  
+  
+  #CAN PLAY AROUND WITH CHANGING THIS SPECIFICITY / THRESHOLD VALUE (WOULD RATHER)
+  
+  
+  
+  #OUTPUT PROBABILITY TO MAKE BINARY DECISION
+  
+  
+  
