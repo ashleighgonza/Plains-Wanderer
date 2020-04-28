@@ -85,7 +85,8 @@
   class(training$Plains_wanderer)
   class(testing$Plains_wanderer)
   
-  #WRITE CSV FILE EARLIER ON!? 
+write.csv(training, 'training.csv')
+write.csv(testing, 'testing.csv')
   
   ============
     MACHINE LEARNING 
